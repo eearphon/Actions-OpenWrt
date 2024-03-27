@@ -60,9 +60,9 @@ git clone https://github.com/openwrt/packages
 git clone https://github.com/openwrt/luci
 cd ..
 rm -rf feeds/packages/net/transmission feeds/packages/net/transmission-web-control feeds/luci/applications/luci-app-transmission
-cp -a /myfeeds/packages/net/transmission feeds/packages/net/
-cp -a /myfeeds/packages/net/transmission-web-control feeds/packages/net/
-cp -a /myfeeds/luci/applications/luci-app-transmission feeds/luci/applications/
+cp -a myfeeds/packages/net/transmission feeds/packages/net/
+cp -a myfeeds/packages/net/transmission-web-control feeds/packages/net/
+cp -a myfeeds/luci/applications/luci-app-transmission feeds/luci/applications/
 rm -rf myfeeds
 
 sed -i '/^PKG_SOURCE_DATE:=/c\PKG_SOURCE_DATE:=2024-03-20' feeds/packages/net/transmission-web-control/Makefile
