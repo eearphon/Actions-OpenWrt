@@ -53,3 +53,22 @@ git clone https://github.com/sbwml/luci-app-alist package/alist
 cat >> .config <<EOF
 CONFIG_PACKAGE_luci-app-alist=y
 EOF
+
+mkdir myfeeds
+cd myfeeds
+git clone https://github.com/openwrt/packages
+git clone https://github.com/openwrt/luci
+cd ..
+rm -rf feeds/packages/net/transmission feeds/packages/net/transmission-web-control feeds/luci/applications/luci-app-transmission
+cp -a /myfeeds/packages/net/transmission feeds/packages/net/
+cp -a /myfeeds/packages/net/transmission-web-control feeds/packages/net/
+cp -a /myfeeds/luci/applications/luci-app-transmission feeds/luci/applications/
+rm -rf myfeeds
+
+sed -i '/^PKG_SOURCE_DATE:=/c\PKG_SOURCE_DATE:=2024-03-20' feeds/packages/net/transmission-web-control/Makefile
+sed -i '/^PKG_SOURCE_VERSION:=/c\PKG_SOURCE_VERSION:=9018e35d12d2e20c9ec01b8a858ecaa2c3ce96f4' feeds/packages/net/transmission-web-control/Makefile
+sed -i '/^PKG_MIRROR_HASH:=/c\PKG_MIRROR_HASH:=' feeds/packages/net/transmission-web-control/Makefile
+
+cat >> .config <<EOF
+CONFIG_PACKAGE_luci-app-transmission=y
+EOF
