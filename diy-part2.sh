@@ -47,3 +47,9 @@ EOF
 
 rm -rf feeds/packages/lang/golang
 git clone https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
+
+rm -rf package/alist
+git clone https://github.com/sbwml/luci-app-alist package/alist
+cat >> .config <<EOF
+CONFIG_PACKAGE_luci-app-alist=y
+EOF
