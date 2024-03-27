@@ -18,3 +18,31 @@
 
 # Modify hostname
 #sed -i 's/OpenWrt/P3TERX-Router/g' package/base-files/files/bin/config_generate
+
+git checkout dc4d37c71423bd48b02f614414b149fa192d3406
+
+rm -rf .config tmp/
+make defconfig
+cat >> .config <<EOF
+CONFIG_PACKAGE_luci-app-frps=y
+CONFIG_PACKAGE_luci-app-hd-idle=y
+CONFIG_PACKAGE_luci-app-minidlna=y
+CONFIG_PACKAGE_luci-app-nfs=y
+CONFIG_PACKAGE_luci-app-softethervpn=y
+CONFIG_PACKAGE_bash=y
+CONFIG_PACKAGE_iperf3=y
+CONFIG_PACKAGE_open-vm-tools=y
+CONFIG_PACKAGE_openssh-sftp-server=y
+CONFIG_PACKAGE_screen=y
+CONFIG_PACKAGE_luci-app-alist=y
+CONFIG_PACKAGE_luci-app-passwall=y
+CONFIG_PACKAGE_luci-app-passwall_INCLUDE_NaiveProxy=y
+CONFIG_PACKAGE_luci-app-passwall2=y
+CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_NaiveProxy=y
+CONFIG_PACKAGE_luci-app-rclone=y
+CONFIG_PACKAGE_kmod-fuse=y
+CONFIG_PACKAGE_ipv6helper=y
+# CONFIG_PACKAGE_automount is not set
+# CONFIG_PACKAGE_autosamba is not set
+CONFIG_PACKAGE_luci-app-dockerman=y
+EOF
