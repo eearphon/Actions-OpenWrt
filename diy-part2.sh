@@ -46,3 +46,6 @@ CONFIG_PACKAGE_ipv6helper=y
 # CONFIG_PACKAGE_autosamba is not set
 CONFIG_PACKAGE_luci-app-dockerman=y
 EOF
+
+rm -rf feeds/packages/lang/golang
+git clone https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
