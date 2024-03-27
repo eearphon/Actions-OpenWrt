@@ -19,8 +19,6 @@
 # Modify hostname
 #sed -i 's/OpenWrt/P3TERX-Router/g' package/base-files/files/bin/config_generate
 
-git checkout dc4d37c71423bd48b02f614414b149fa192d3406
-
 rm -rf .config tmp/
 make defconfig
 cat >> .config <<EOF
