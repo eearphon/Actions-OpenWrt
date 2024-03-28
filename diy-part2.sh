@@ -71,5 +71,5 @@ sed -i '/^PKG_MIRROR_HASH:=/c\PKG_MIRROR_HASH:=' feeds/packages/net/transmission
 sed -i '/DEPENDS:=/d' feeds/packages/net/transmission-web-control/Makefile
 
 cat >> .config <<EOF
-CONFIG_PACKAGE_transmission-web-control=m
+CONFIG_PACKAGE_transmission-web-control=y
 EOF
