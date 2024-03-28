@@ -47,3 +47,8 @@ git clone https://github.com/sbwml/luci-app-alist package/alist
 cat >> .config <<EOF
 CONFIG_PACKAGE_luci-app-alist=y
 EOF
+
+git clone https://github.com/eearphon/Rclone-OpenWrt package/Rclone-OpenWrt
+cat >> .config <<EOF
+CONFIG_PACKAGE_luci-app-rclone=y
+EOF
