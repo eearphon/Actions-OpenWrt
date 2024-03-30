@@ -28,7 +28,6 @@ CONFIG_VMDK_IMAGES=y
 CONFIG_PACKAGE_open-vm-tools=y
 CONFIG_PACKAGE_luci-app-passwall=y
 CONFIG_PACKAGE_luci-app-passwall_INCLUDE_NaiveProxy=y
-CONFIG_PACKAGE_luci-app-frps=y
 CONFIG_PACKAGE_luci-app-hd-idle=y
 CONFIG_PACKAGE_luci-app-minidlna=y
 CONFIG_PACKAGE_bash=y
@@ -43,8 +42,10 @@ CONFIG_PACKAGE_luci-app-timecontrol=y
 CONFIG_PACKAGE_luci-app-transmission=y
 EOF
 
-#rm -rf feeds/packages/lang/golang
-#git clone https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
+#CONFIG_PACKAGE_luci-app-frps=y
+
+rm -rf feeds/packages/lang/golang
+git clone https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
 
 rm -rf package/alist
 git clone https://github.com/sbwml/luci-app-alist package/alist
