@@ -28,6 +28,7 @@ CONFIG_VMDK_IMAGES=y
 CONFIG_PACKAGE_open-vm-tools=y
 CONFIG_PACKAGE_luci-app-passwall=y
 CONFIG_PACKAGE_luci-app-passwall_INCLUDE_NaiveProxy=y
+CONFIG_PACKAGE_luci-app-frps=y
 CONFIG_PACKAGE_luci-app-hd-idle=y
 CONFIG_PACKAGE_luci-app-minidlna=y
 CONFIG_PACKAGE_bash=y
@@ -42,23 +43,21 @@ CONFIG_PACKAGE_luci-app-timecontrol=y
 CONFIG_PACKAGE_luci-app-transmission=y
 EOF
 
-#CONFIG_PACKAGE_luci-app-frps=y
+#rm -rf feeds/packages/lang/golang
+#git clone https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
 
-rm -rf feeds/packages/lang/golang
-git clone https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
-
-rm -rf package/alist
-git clone https://github.com/sbwml/luci-app-alist package/alist
-cat >> .config <<EOF
-CONFIG_PACKAGE_luci-app-alist=y
-EOF
+#rm -rf package/alist
+#git clone https://github.com/sbwml/luci-app-alist package/alist
+#cat >> .config <<EOF
+#CONFIG_PACKAGE_luci-app-alist=y
+#EOF
 
 sed -i '/^PKG_SOURCE_DATE:=/c\PKG_SOURCE_DATE:=2024-03-20' feeds/packages/net/transmission-web-control/Makefile
 sed -i '/^PKG_SOURCE_VERSION:=/c\PKG_SOURCE_VERSION:=9018e35d12d2e20c9ec01b8a858ecaa2c3ce96f4' feeds/packages/net/transmission-web-control/Makefile
-sed -i '/^PKG_MIRROR_HASH:=/c\PKG_MIRROR_HASH:=' feeds/packages/net/transmission-web-control/Makefile
+sed -i '/^PKG_MIRROR_HASH:=/c\PKG_MIRROR_HASH:=2114a78d15d274a3b4fc5bc349d6de92969fa172ccc1e4359c7e228e9181185c' feeds/packages/net/transmission-web-control/Makefile
 sed -i '/DEPENDS:=/d' feeds/packages/net/transmission-web-control/Makefile
 
-git clone https://github.com/eearphon/Rclone-OpenWrt package/Rclone-OpenWrt
-cat >> .config <<EOF
-CONFIG_PACKAGE_luci-app-rclone=y
-EOF
+#git clone https://github.com/eearphon/Rclone-OpenWrt package/Rclone-OpenWrt
+#cat >> .config <<EOF
+#CONFIG_PACKAGE_luci-app-rclone=y
+#EOF
