@@ -7,15 +7,16 @@ env:
   DAY_OF_WEEK: Monday
 
 jobs:
-  greeting_job:
+  conditional-env:
     runs-on: ubuntu-latest
-    env:
-      Greeting: Hello
-      MY_ENV_VAR: ${{ if eq(variables.configuration, 'production') }}"production-value"${{ else }}"staging-value"${{ endif }}
     steps:
-      - name: "Say Hello Mona it's Monday"
-        run: |
-          echo "$Greeting $First_Name. Today is $DAY_OF_WEEK!"
-          cat /etc/os-release
-        env:
-          First_Name: Mona
+    - name: Checkout Code
+      uses: actions/checkout@v2
+ 
+    - name: Set Environment Variable Conditionally
+      run: |
+        if [ "{${{ github.ref_name }}" == "main" ]; then
+          echo "##[set-env name=MY_VARIABLE;value=MainBranchValue]"
+        else
+          echo "##[set-env name=MY_VARIABLE;value=OtherBranchValue]"
+        fi
