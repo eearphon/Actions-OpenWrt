@@ -5,13 +5,13 @@ on:
 
 env:
   DAY_OF_WEEK: Monday
-  MY_ENV_VAR: ${{ if eq(variables.configuration, 'production') }}"production-value"${{ else }}"staging-value"${{ endif }}
 
 jobs:
   greeting_job:
     runs-on: ubuntu-latest
     env:
       Greeting: Hello
+      MY_ENV_VAR: ${{ if eq(variables.configuration, 'production') }}"production-value"${{ else }}"staging-value"${{ endif }}
     steps:
       - name: "Say Hello Mona it's Monday"
         run: |
