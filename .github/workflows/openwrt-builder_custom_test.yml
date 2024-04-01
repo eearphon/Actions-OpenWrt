@@ -13,20 +13,9 @@ on:
         required: true
         default: '192.168.2.1'
 
-      repobranch:
-        description: 'repo branch(22.03 23.05 main)'
-        required: true
-        default: 'master'
-      diy-partx_suffix:
-        description: 'diy-partx_suffix.sh'
-        required: true
-        default: 'lede'
-
 env:
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: .config
-  DIY_P1_SH: diy-part1.sh
-  DIY_P2_SH: diy-part2.sh
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
@@ -50,7 +39,7 @@ jobs:
         echo "REPO_URL=$var1" >> $GITHUB_ENV
         echo "REPO_BRANCH=$var2" >> $GITHUB_ENV
         echo "OWNER=$(echo '${{ github.event.inputs.repourl }}' | awk -F"/" '{print $4'})" >> $GITHUB_ENV
-        echo "DIY_P1_SH=$DIY_P1_SH" >> $GITHUB_ENV
+        echo "DIY_P1_SH=diy-part1_${OWNER}_${REPO_BRANCH}.sh" >> $GITHUB_ENV
       env:
         DEBIAN_FRONTEND: noninteractive
 
