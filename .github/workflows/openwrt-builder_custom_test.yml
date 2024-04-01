@@ -5,37 +5,60 @@ on:
   workflow_dispatch:
     inputs:
       repourl:
-        description: 'repo(https://github.com/Lienol/openwrt)'
+        description: 'repo_url;branch (https://github.com/Lienol/openwrt;22.03)'
         required: true
         default: 'https://github.com/coolsnowwolf/lede'
-      repobranch:
-        description: 'branch(22.03 23.05 main)'
-        required: true
-        default: 'master'
       lanip:
         description: 'lan ip address'
         required: true
         default: '192.168.2.1'
 
+      repobranch:
+        description: 'repo branch(22.03 23.05 main)'
+        required: true
+        default: 'master'
+      diy-partx_suffix:
+        description: 'diy-partx_suffix.sh'
+        required: true
+        default: 'lede'
+
 env:
-  REPO_URL: ${{ github.event.inputs.repourl }}
-  REPO_BRANCH: ${{ github.event.inputs.repobranch }}
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: .config
-  DIY_P1_SH: diy-part1_other_${{ github.event.inputs.repobranch }}.sh
+  DIY_P1_SH: diy-part1.sh
+  DIY_P2_SH: diy-part2.sh
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
  
 jobs:
-  print-env:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-22.04
+    permissions: 
+      contents: write
+      actions: write
+
     steps:
+    - name: Checkout
+      uses: actions/checkout@main
+
+    - name: Initialization environment
+      run: |
+        echo $DIY_P1_SH
+        cat ${{ github.event.inputs.repourl }} | awk -F";" '{var1=$1; var2=$2;}'
+        echo "REPO_URL=$var1" >> $GITHUB_ENV
+        echo "REPO_BRANCH=$var2" >> $GITHUB_ENV
+        echo "DIY_P1_SH=$DIY_P1_SH" >> $GITHUB_ENV
+      env:
+        DEBIAN_FRONTEND: noninteractive
+
     - name: Print Environment Variables
       run: |
         echo $DIY_P1_SH
-        echo "DIY_P1_SHa=$DIY_P1_SH" >> $GITHUB_ENV
+        echo "DIY_P1_SH=$DIY_P1_SH" >> $GITHUB_ENV
 
     - name: Print again
-      run: echo ${{ env.DIY_P1_SHa }}
+      run: echo ${{ env.DIY_P1_SH }}
+      run: echo ${{ env.REPO_URL }}
+      run: echo ${{ env.REPO_BRANCH }}
