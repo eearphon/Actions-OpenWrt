@@ -5,6 +5,7 @@ on:
 
 env:
   DAY_OF_WEEK: Monday
+  MY_ENV_VAR: ${{ if eq(variables.configuration, 'production') }}"production-value"${{ else }}"staging-value"${{ endif }}
 
 jobs:
   greeting_job:
