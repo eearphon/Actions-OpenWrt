@@ -34,20 +34,10 @@ env:
   REPO_BRANCH: ${{ github.event.inputs.repobranch }}
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: .config
-  DIY_P1_SH: ${{ if eq(github.event.inputs.repourl, 'https://github.com/coolsnowwolf/lede') }}
-               diy-part1_lede_$REPO_BRANCH.sh
-             {{- else if eq(github.event.inputs.repourl, 'https://github.com/Lienol/openwrt') }}
-               diy-part1_lienol_$REPO_BRANCH.sh
-             {{- else }}
-               diy-part1_other_$REPO_BRANCH.sh
-             {{- end }}
-  DIY_P2_SH: ${{ if eq(github.event.inputs.repourl, 'https://github.com/coolsnowwolf/lede') }}
-               diy-part2_lede_$REPO_BRANCH.sh
-             {{- else if eq(github.event.inputs.repourl, 'https://github.com/Lienol/openwrt') }}
-               diy-part2_lienol_$REPO_BRANCH.sh
-             {{- else }}
-               diy-part2_other_$REPO_BRANCH.sh
-             {{- end }}
+  DIY_P1_SH: ${{ github.event.inputs.repourl == 'https://github.com/coolsnowwolf/lede' ? "diy-part1_lede_$REPO_BRANCH" : "diy-part1_other_$REPO_BRANCH" }}
+  DIY_P1_SH: ${{ github.event.inputs.repourl == 'https://github.com/Lienol/openwrt' ? "diy-part1_lienol_$REPO_BRANCH" : $DIY_P1_SH }}
+  DIY_P2_SH: ${{ github.event.inputs.repourl == 'https://github.com/coolsnowwolf/lede' ? "diy-part2_lede_$REPO_BRANCH" : "diy-part2_other_$REPO_BRANCH" }}
+  DIY_P2_SH: ${{ github.event.inputs.repourl == 'https://github.com/Lienol/openwrt' ? "diy-part2_lienol_$REPO_BRANCH" : $DIY_P2_SH }}
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
