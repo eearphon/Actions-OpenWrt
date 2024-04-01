@@ -35,7 +35,7 @@ jobs:
     - name: Print Environment Variables
       run: |
         echo $DIY_P1_SH
-        echo "DIY_P1_SH=$DIY_P1_SH" >> $GITHUB_ENV
+        echo "DIY_P1_SHa=$DIY_P1_SH" >> $GITHUB_ENV
 
     - name: Print again
-      run: echo ${{ env.DIY_P1_SH }}
+      run: echo ${{ env.DIY_P1_SHa }}
