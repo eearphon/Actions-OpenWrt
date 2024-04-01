@@ -1,30 +1,36 @@
-name: Greeting on variable day
-
+name: Print Environment Variables
+ 
 on:
   repository_dispatch:
   workflow_dispatch:
     inputs:
       repourl:
-        description: "Environment"
+        description: 'repo(https://github.com/Lienol/openwrt)'
         required: true
-        default: "poc"
-        type: choice
-        options:
-          - poc
-          - non-poc
+        default: 'https://github.com/coolsnowwolf/lede'
+      repobranch:
+        description: 'branch(22.03 23.05 main)'
+        required: true
+        default: 'master'
+      lanip:
+        description: 'lan ip address'
+        required: true
+        default: '192.168.2.1'
 
 env:
-  DAY_OF_WEEK: Monday
-
+  REPO_URL: ${{ github.event.inputs.repourl }}
+  REPO_BRANCH: ${{ github.event.inputs.repobranch }}
+  FEEDS_CONF: feeds.conf.default
+  CONFIG_FILE: .config
+  DIY_P1_SH: diy-part1_other_$REPO_BRANCH.sh
+  UPLOAD_BIN_DIR: false
+  UPLOAD_FIRMWARE: true
+  UPLOAD_RELEASE: true
+  TZ: Asia/Shanghai
+ 
 jobs:
-  greeting_job:
+  print-env:
     runs-on: ubuntu-latest
-    env:
-      Greeting: Hello
     steps:
-      - name: "Say Hello Mona it's Monday"
-        run: |
-          echo "$Greeting $First_Name. Today is $DAY_OF_WEEK!"
-          cat /etc/os-release
-        env:
-          First_Name: Mona
+    - name: Print Environment Variables
+      run: printenv
