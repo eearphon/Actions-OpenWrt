@@ -2,21 +2,28 @@ name: Greeting on variable day
 
 on:
   workflow_dispatch
+    inputs:
+      environment:
+        description: "Environment"
+        required: true
+        default: "poc"
+        type: choice
+        options:
+          - poc
+          - non-poc
 
 env:
   DAY_OF_WEEK: Monday
 
 jobs:
-  conditional-env:
+  greeting_job:
     runs-on: ubuntu-latest
+    env:
+      Greeting: Hello
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v2
- 
-    - name: Set Environment Variable Conditionally
-      run: |
-        if [ "{${{ github.ref_name }}" == "main" ]; then
-          echo "##[set-env name=MY_VARIABLE;value=MainBranchValue]"
-        else
-          echo "##[set-env name=MY_VARIABLE;value=OtherBranchValue]"
-        fi
+      - name: "Say Hello Mona it's Monday"
+        run: |
+          echo "$Greeting $First_Name. Today is $DAY_OF_WEEK!"
+          cat /etc/os-release
+        env:
+          First_Name: Mona
