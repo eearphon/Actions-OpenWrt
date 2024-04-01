@@ -49,7 +49,7 @@ jobs:
         eval $(echo '${{ github.event.inputs.repourl }}' | awk -F";" '{print "var1="$1";var2="$2}')
         echo "REPO_URL=$var1" >> $GITHUB_ENV
         echo "REPO_BRANCH=$var2" >> $GITHUB_ENV
-        echo "OWNER=$(echo '${{ github.event.inputs.repourl }}' | awk -F"/" '{print $4')" >> $GITHUB_ENV
+        echo "OWNER=$(echo '${{ github.event.inputs.repourl }}' | awk -F"/" '{print $4'})" >> $GITHUB_ENV
         echo "DIY_P1_SH=$DIY_P1_SH" >> $GITHUB_ENV
       env:
         DEBIAN_FRONTEND: noninteractive
