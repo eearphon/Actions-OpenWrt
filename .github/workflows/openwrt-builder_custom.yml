@@ -135,7 +135,7 @@ jobs:
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: |
         cd openwrt/bin/targets/*/*
-        [ -e openwrt-x86-64-generic-squashfs-combined-efi.vmdk ] && mv openwrt-x86-64-generic-squashfs-combined-efi.vmdk openwrt-x86-64-generic-squashfs-combined-efi_$(cat version.buildinfo)_$(grep 'KERNEL_PATCHVER:=' ../../../../target/linux/x86/Makefile | awk -F"=" '{print $2}').vmdk
+        [ -e openwrt-x86-64-generic-squashfs-combined-efi.vmdk ] && mv openwrt-x86-64-generic-squashfs-combined-efi.vmdk openwrt-x86-64-generic-squashfs-combined-efi_$(cat version.buildinfo)_$(grep 'KERNEL_PATCHVER:=' ../../../../target/linux/x86/Makefile | awk -F"=" '{print $2}')_${{ github.event.inputs.lanip }}.vmdk
         rm -rf packages
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
