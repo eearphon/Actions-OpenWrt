@@ -46,7 +46,7 @@ jobs:
     - name: Initialization environment
       run: |
         echo $DIY_P1_SH
-        cat ${{ github.event.inputs.repourl }} | awk -F";" '{var1=$1; var2=$2;}'
+        echo ${{ github.event.inputs.repourl }} | awk -F";" '{var1=$1; var2=$2;}'
         echo "REPO_URL=$var1" >> $GITHUB_ENV
         echo "REPO_BRANCH=$var2" >> $GITHUB_ENV
         echo "DIY_P1_SH=$DIY_P1_SH" >> $GITHUB_ENV
