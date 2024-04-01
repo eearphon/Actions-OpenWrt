@@ -17,34 +17,22 @@ on:
   workflow_dispatch:
     inputs:
       repourl:
-        description: 'repo url(https://github.com/Lienol/openwrt)'
+        description: 'repo_url;branch (https://github.com/Lienol/openwrt;22.03)'
         required: true
         default: 'https://github.com/coolsnowwolf/lede'
-      repobranch:
-        description: 'repo branch(22.03 23.05 main)'
-        required: true
-        default: 'master'
-      diy-partx_suffix:
-        description: 'diy-partx_suffix.sh'
-        required: true
-        default: 'lede'
       lanip:
         description: 'lan ip address'
         required: true
         default: '192.168.2.1'
 
 env:
-  REPO_URL: ${{ github.event.inputs.repourl }}
-  REPO_BRANCH: ${{ github.event.inputs.repobranch }}
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: .config
-  DIY_P1_SH: diy-part1_${{ github.event.inputs.diy-partx_suffix }}.sh
-  DIY_P2_SH: diy-part2_${{ github.event.inputs.diy-partx_suffix }}.sh
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
-
+ 
 jobs:
   build:
     runs-on: ubuntu-22.04
@@ -57,6 +45,15 @@ jobs:
       uses: actions/checkout@main
 
     - name: Initialization environment
+      run: |
+        echo $DIY_P1_SH
+        eval $(echo '${{ github.event.inputs.repourl }}' | awk -F";" '{print "var1="$1";var2="$2}')
+        echo "REPO_URL=$var1" >> $GITHUB_ENV
+        echo "REPO_BRANCH=$var2" >> $GITHUB_ENV
+        var3=$(echo '${{ github.event.inputs.repourl }}' | awk -F"/" '{print $4'})
+        [ -n "$var2" ] && var2="_$var2"
+        echo "OWNER=$var3" >> $GITHUB_ENV
+        echo "DIY_P1_SH=diy-part1_${var3}${var2}.sh" >> $GITHUB_ENV
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
@@ -74,7 +71,8 @@ jobs:
       working-directory: /workdir
       run: |
         df -hT $PWD
-        git clone $REPO_URL -b $REPO_BRANCH --single-branch openwrt
+        [ -n "$REPO_BRANCH" ] && branchstr="-b $REPO_BRANCH" || branchstr=''
+        git clone $REPO_URL $branchstr --single-branch openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
     - name: Load custom feeds
@@ -113,7 +111,8 @@ jobs:
       run: |
         cd openwrt
         echo -e "$(nproc) thread compile"
-        make -j$(nproc) || make -j1 || make -j1 V=s
+        #make -j$(nproc) || make -j1 || make -j1 V=s
+        mkdir -p bin/targets/x86/64 && ls -l >> bin/targets/x86/64/openwrt_files.txt && env >> bin/targets/x86/64/env.txt
         echo "status=success" >> $GITHUB_OUTPUT
         grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
