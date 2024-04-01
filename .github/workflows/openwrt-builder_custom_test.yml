@@ -22,7 +22,7 @@ env:
   REPO_BRANCH: ${{ github.event.inputs.repobranch }}
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: .config
-  DIY_P1_SH: diy-part1_other_$REPO_BRANCH.sh
+  DIY_P1_SH: diy-part1_other_${{ github.event.inputs.repobranch }}.sh
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
@@ -34,3 +34,5 @@ jobs:
     steps:
     - name: Print Environment Variables
       run: date
+      env:
+        DIY_P1_SH: aaaaaaaaaaaaa
