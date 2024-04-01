@@ -16,7 +16,7 @@ on:
   repository_dispatch:
   workflow_dispatch:
     inputs:
-      repourl:
+      repo:
         description: 'repo_url;branch (https://github.com/Lienol/openwrt;22.03)'
         required: true
         default: 'https://github.com/coolsnowwolf/lede'
@@ -57,14 +57,15 @@ jobs:
         sudo timedatectl set-timezone "$TZ"
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
-        eval $(echo '${{ github.event.inputs.repourl }}' | awk -F";" '{print "var1="$1";var2="$2}')
+        eval $(echo '${{ github.event.inputs.repo }}' | awk -F";" '{print "var1="$1";var2="$2}')
         echo "REPO_URL=$var1" >> $GITHUB_ENV
         echo "REPO_BRANCH=$var2" >> $GITHUB_ENV
-        var3=$(echo '${{ github.event.inputs.repourl }}' | awk -F"/" '{print $4'})
+        var3=$(echo '${{ github.event.inputs.repo }}' | awk -F"/" '{print $4'})
         [ -n "$var2" ] && var2="_$var2"
         echo "OWNER=$var3" >> $GITHUB_ENV
         echo "DIY_P1_SH=diy-part1_${var3}${var2}.sh" >> $GITHUB_ENV
         echo "DIY_P2_SH=diy-part2_${var3}${var2}.sh" >> $GITHUB_ENV
+        echo "SUFFIX=${var3}${var2}" >> $GITHUB_ENV
 
     - name: Clone source code
       working-directory: /workdir
@@ -149,7 +150,7 @@ jobs:
       id: tag
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
-        echo "release_tag=$(date +"%Y.%m.%d-%H%M")_${{ github.event.inputs.diy-partx_suffix }}" >> $GITHUB_OUTPUT
+        echo "release_tag=$(date +"%Y.%m.%d-%H%M")_$SUFFIX" >> $GITHUB_OUTPUT
         touch release.txt
         [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
         echo "status=success" >> $GITHUB_OUTPUT
