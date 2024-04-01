@@ -59,6 +59,7 @@ jobs:
         echo "DIY_P1_SH=$DIY_P1_SH" >> $GITHUB_ENV
 
     - name: Print again
-      run: echo ${{ env.DIY_P1_SH }}
-      run: echo ${{ env.REPO_URL }}
-      run: echo ${{ env.REPO_BRANCH }}
+      run: |
+        echo ${{ env.DIY_P1_SH }}
+        echo ${{ env.REPO_URL }}
+        echo ${{ env.REPO_BRANCH }}
