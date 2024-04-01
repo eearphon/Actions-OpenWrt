@@ -33,9 +33,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Print Environment Variables
-      run: echo $DIY_P1_SH
-      env:
-        DIY_P1_SH: aaaaaaaaaaaaa
+      run: |
+        echo $DIY_P1_SH
+        echo "##[set-env name=DIY_P1_SH;]$(echo "new-value")"
 
     - name: Print again
       run: echo $DIY_P1_SH
