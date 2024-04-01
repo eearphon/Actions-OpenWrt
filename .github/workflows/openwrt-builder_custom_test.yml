@@ -15,14 +15,39 @@ name: OpenWrt Builder custom test
 on:
   repository_dispatch:
   workflow_dispatch:
+    inputs:
+      repourl:
+        description: 'repo(https://github.com/Lienol/openwrt)'
+        required: true
+        default: 'https://github.com/coolsnowwolf/lede'
+      repobranch:
+        description: 'branch(22.03 23.05 main)'
+        required: true
+        default: 'master'
+      lanip:
+        description: 'lan ip address'
+        required: true
+        default: '192.168.2.1'
 
 env:
-  REPO_URL: https://github.com/coolsnowwolf/lede
-  REPO_BRANCH: master
+  REPO_URL: ${{ github.event.inputs.repourl }}
+  REPO_BRANCH: ${{ github.event.inputs.repobranch }}
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: .config
-  DIY_P1_SH: diy-part1.sh
-  DIY_P2_SH: diy-part2.sh
+  DIY_P1_SH: ${{ if eq(github.event.inputs.repourl, 'https://github.com/coolsnowwolf/lede') }}
+               diy-part1_lede_$REPO_BRANCH.sh
+             {{- else if eq(github.event.inputs.repourl, 'https://github.com/Lienol/openwrt') }}
+               diy-part1_lienol_$REPO_BRANCH.sh
+             {{- else }}
+               diy-part1_other_$REPO_BRANCH.sh
+             {{- end }}
+  DIY_P2_SH: ${{ if eq(github.event.inputs.repourl, 'https://github.com/coolsnowwolf/lede') }}
+               diy-part2_lede_$REPO_BRANCH.sh
+             {{- else if eq(github.event.inputs.repourl, 'https://github.com/Lienol/openwrt') }}
+               diy-part2_lienol_$REPO_BRANCH.sh
+             {{- else }}
+               diy-part2_other_$REPO_BRANCH.sh
+             {{- end }}
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
@@ -33,6 +58,7 @@ jobs:
     runs-on: ubuntu-22.04
     permissions: 
       contents: write
+      actions: write
 
     steps:
     - name: Checkout
@@ -56,7 +82,7 @@ jobs:
       working-directory: /workdir
       run: |
         df -hT $PWD
-        git clone $REPO_URL -b $REPO_BRANCH openwrt
+        git clone $REPO_URL -b $REPO_BRANCH --single-branch openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
     - name: Load custom feeds
@@ -66,6 +92,12 @@ jobs:
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
 
+    - name: Update feeds
+      run: cd openwrt && ./scripts/feeds update -a
+
+    - name: Install feeds
+      run: cd openwrt && ./scripts/feeds install -a
+
     - name: Load custom configuration
       run: |
         [ -e files ] && mv files openwrt/files
@@ -73,12 +105,16 @@ jobs:
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
+        sed -i 's/192.168.1.1/${{ github.event.inputs.lanip }}/g' package/base-files/files/bin/config_generate
 
     - name: Download package
       id: package
       run: |
         cd openwrt
         make defconfig
+        make download -j8
+        find dl -size -1024c -exec ls -l {} \;
+        find dl -size -1024c -exec rm -f {} \;
 
     - name: Compile the firmware
       id: compile
@@ -108,8 +144,8 @@ jobs:
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: |
         cd openwrt/bin/targets/*/*
+        [ -e openwrt-x86-64-generic-squashfs-combined-efi.vmdk ] && mv openwrt-x86-64-generic-squashfs-combined-efi.vmdk openwrt-x86-64-generic-squashfs-combined-efi_$(cat version.buildinfo)_$(grep 'KERNEL_PATCHVER:=' ../../../../target/linux/x86/Makefile | awk -F"=" '{print $2}')_${{ github.event.inputs.lanip }}.vmdk
         rm -rf packages
-        cp /home/runner/work/_temp/*.sh .
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
 
@@ -124,7 +160,7 @@ jobs:
       id: tag
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
-        echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
+        echo "release_tag=$(date +"%Y.%m.%d-%H%M")_$DIY_P1_SH" >> $GITHUB_OUTPUT
         touch release.txt
         [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
         echo "status=success" >> $GITHUB_OUTPUT
@@ -149,7 +185,7 @@ jobs:
       uses: dev-drprasad/delete-older-releases@master
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       with:
-        keep_latest: 3
+        keep_latest: 20
         delete_tags: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
