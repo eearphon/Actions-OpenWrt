@@ -80,13 +80,13 @@ jobs:
         [ -n "${{ github.event.inputs.diy-partx_suffix }}" ] || echo "DIY_P1_SH=diy-part1_${var3}${var2}.sh" >> $GITHUB_ENV
         [ -n "${{ github.event.inputs.diy-partx_suffix }}" ] || echo "DIY_P2_SH=diy-part2_${var3}${var2}.sh" >> $GITHUB_ENV
         echo "SUFFIX=${var3}${var2}" >> $GITHUB_ENV
-        exit 1
 
     - name: Clone source code
       working-directory: /workdir
       run: |
         df -hT $PWD
         [ -n "$REPO_BRANCH" ] && branchstr="-b $REPO_BRANCH" || branchstr=''
+        exit 1
         git clone $REPO_URL $branchstr --single-branch openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
