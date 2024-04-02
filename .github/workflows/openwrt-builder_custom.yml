@@ -72,3 +72,9 @@ jobs:
         [ -n "$var2" ] || DIY_P2_SH=diy-part2_${var3}${var2}.sh
         echo "SUFFIX=${var3}${var2}" >> $GITHUB_ENV
         echo "$GITHUB_ENV"
+
+    - name: Clone source code
+      run: |
+        pwd
+	ls -l
+        echo $GITHUB_ENV
