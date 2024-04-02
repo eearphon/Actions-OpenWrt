@@ -76,10 +76,8 @@ jobs:
         echo "REPO_BRANCH=$var2" >> $GITHUB_ENV
         var3=$(echo '${{ github.event.inputs.repo }}' | awk -F"/" '{print $4'})
         [ -n "$var2" ] && var2="_$var2"
-        echo "OWNER=$var3" >> $GITHUB_ENV
         [ -n "${{ github.event.inputs.diy-partx_suffix }}" ] || echo "DIY_P1_SH=diy-part1_${var3}${var2}.sh" >> $GITHUB_ENV
         [ -n "${{ github.event.inputs.diy-partx_suffix }}" ] || echo "DIY_P2_SH=diy-part2_${var3}${var2}.sh" >> $GITHUB_ENV
-        echo "SUFFIX=${var3}${var2}" >> $GITHUB_ENV
 
     - name: Clone source code
       working-directory: /workdir
@@ -126,8 +124,8 @@ jobs:
       run: |
         cd openwrt
         echo -e "$(nproc) thread compile"
-        #make -j$(nproc) || make -j1 || make -j1 V=s
-        mkdir -p bin/targets/x86/64 && ls -l >> bin/targets/x86/64/openwrt_files.txt && env >> bin/targets/x86/64/env.txt
+        make -j$(nproc) || make -j1 || make -j1 V=s
+        #mkdir -p bin/targets/x86/64 && ls -l >> bin/targets/x86/64/openwrt_files.txt && env >> bin/targets/x86/64/env.txt
         echo "status=success" >> $GITHUB_OUTPUT
         grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
@@ -166,7 +164,7 @@ jobs:
       id: tag
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
-        echo "release_tag=$(date +"%Y.%m.%d-%H%M")_$SUFFIX" >> $GITHUB_OUTPUT
+        echo "release_tag=$(date +"%Y.%m.%d-%H%M")_$VERSION_KERNEL" >> $GITHUB_OUTPUT
         date >> release.txt
         echo "REPO_URL: ${{ env.REPO_URL }}" >> release.txt
         echo "REPO_BRANCH: ${{ env.REPO_BRANCH }}" >> release.txt
