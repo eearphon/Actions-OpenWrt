@@ -168,7 +168,11 @@ jobs:
       run: |
         echo "release_tag=$(date +"%Y.%m.%d-%H%M")_$SUFFIX" >> $GITHUB_OUTPUT
         date >> release.txt
-        cat $GITHUB_ENV >> release.txt
+        echo "REPO_URL: ${{ env.REPO_URL }}" >> release.txt
+        echo "REPO_BRANCH: ${{ env.REPO_BRANCH }}" >> release.txt
+        echo "DIY_P1_SH: ${{ env.DIY_P1_SH }}" >> release.txt
+        echo "DIY_P2_SH: ${{ env.DIY_P2_SH }}" >> release.txt
+        echo "VERSION_KERNEL: ${{ env.VERSION_KERNEL }}" >> release.txt
         [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
         echo "status=success" >> $GITHUB_OUTPUT
         pwd && ls -al
