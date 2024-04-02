@@ -69,7 +69,7 @@ jobs:
         [ -n "$var2" ] && var2="_$var2"
         echo "OWNER=$var3" >> $GITHUB_ENV
         echo "DIY_P1_SH=diy-part1_${var3}${var2}.sh" >> $GITHUB_ENV
-        [ -n "$var2" ] || DIY_P2_SH=diy-part2_${var3}${var2}.sh
+        [ -n ${{ github.event.inputs.diy-partx_suffix }} ] || DIY_P2_SH=diy-part2_${var3}${var2}.sh
         echo "SUFFIX=${var3}${var2}" >> $GITHUB_ENV
         echo "$GITHUB_ENV"
 
