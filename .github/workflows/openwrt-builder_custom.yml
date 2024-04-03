@@ -94,7 +94,8 @@ jobs:
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
         [ -e $DIY_P1_SH ] && chmod +x $DIY_P1_SH
         cd openwrt
-        [ -e $GITHUB_WORKSPACE/$DIY_P1_SH ] && pwd
+        echo [ -e $GITHUB_WORKSPACE/$DIY_P1_SH ]
+        [ -e feeds.conf.default ] && pwd && ls -l
 
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a
