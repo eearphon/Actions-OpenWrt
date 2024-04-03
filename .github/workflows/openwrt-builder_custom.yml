@@ -92,14 +92,9 @@ jobs:
     - name: Load custom feeds
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-        ls -l
         [ -e $DIY_P1_SH ] && chmod +x $DIY_P1_SH
-        ls -l
-        pwd
         cd openwrt
-        ls -l ../
-        echo $GITHUB_WORKSPACE
-        #[ -e ../$DIY_P1_SH ] && $GITHUB_WORKSPACE/$DIY_P1_SH
+        [ -e $GITHUB_WORKSPACE/$DIY_P1_SH ] && pwd
 
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a
@@ -113,7 +108,7 @@ jobs:
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
         [ -e $DIY_P2_SH ] && chmod +x $DIY_P2_SH
         cd openwrt
-        [ -e ../$DIY_P2_SH ] && $GITHUB_WORKSPACE/$DIY_P2_SH
+        [ -e $GITHUB_WORKSPACE/$DIY_P2_SH ] && $GITHUB_WORKSPACE/$DIY_P2_SH
         echo "VERSION_KERNEL=$(./scripts/getver.sh)_$(grep 'KERNEL_PATCHVER:=' target/linux/x86/Makefile | awk -F"=" '{print $2}')" >> $GITHUB_ENV
         sed -i -E "/lan\) ipad=/s/([0-9]{1,3}\.){3}[0-9]{1,3}/${{ env.LAN_IP }}/" package/base-files/files/bin/config_generate
 
