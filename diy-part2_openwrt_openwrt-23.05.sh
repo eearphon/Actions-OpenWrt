@@ -46,6 +46,7 @@ CONFIG_PACKAGE_luci-app-dockerman=y
 CONFIG_PACKAGE_luci-app-alist=y
 CONFIG_PACKAGE_transmission-web-control=y
 CONFIG_PACKAGE_block-mount=y
+CONFIG_PACKAGE_dockerd=y
 EOF
 
 rm -rf feeds/packages/lang/golang
