@@ -1,5 +1,5 @@
 #GitHub CI action to build packages via SDK using official OpenWrt SDK Docker containers.
-name: Build packages via SDK
+name: Build packages via OpenWrt SDK
 
 on:
   repository_dispatch:
