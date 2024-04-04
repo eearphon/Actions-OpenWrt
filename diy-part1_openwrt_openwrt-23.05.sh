@@ -21,4 +21,5 @@ cat >> ./feeds.conf.default <<EOF
 src-git passwall_packages https://github.com/xiaorouji/openwrt-passwall-packages.git;main
 src-git passwall https://github.com/xiaorouji/openwrt-passwall.git;main
 src-git passwall2 https://github.com/xiaorouji/openwrt-passwall2.git
+src-git lienol https://github.com/Lienol/openwrt-package.git;main
 EOF
