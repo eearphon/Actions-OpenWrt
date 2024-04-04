@@ -69,3 +69,8 @@ cat >> .config <<EOF
 CONFIG_PACKAGE_luci-app-rclone=y
 CONFIG_PACKAGE_luci-lib-ipkg=y
 EOF
+
+#src-git lienol https://github.com/Lienol/openwrt-package.git;main
+cat >> .config <<EOF
+CONFIG_PACKAGE_luci-app-openvpn-server=y
+EOF
