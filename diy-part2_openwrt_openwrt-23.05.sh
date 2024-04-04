@@ -67,4 +67,5 @@ sed -i '/DEPENDS:=/d' feeds/packages/net/transmission-web-control/Makefile
 git clone https://github.com/eearphon/Rclone-OpenWrt package/Rclone-OpenWrt
 cat >> .config <<EOF
 CONFIG_PACKAGE_luci-app-rclone=y
+CONFIG_PACKAGE_luci-lib-ipkg=y
 EOF
