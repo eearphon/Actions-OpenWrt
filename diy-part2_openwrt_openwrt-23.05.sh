@@ -48,6 +48,7 @@ CONFIG_PACKAGE_transmission-web-control=y
 CONFIG_PACKAGE_block-mount=y
 CONFIG_PACKAGE_dockerd=y
 # CONFIG_TARGET_ROOTFS_EXT4FS is not set
+CONFIG_PACKAGE_mount-utils=y
 EOF
 
 rm -rf feeds/packages/lang/golang
