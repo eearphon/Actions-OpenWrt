@@ -19,6 +19,9 @@
 # Modify hostname
 #sed -i 's/OpenWrt/P3TERX-Router/g' package/base-files/files/bin/config_generate
 
+# Default settings
+wget -P package/base-files/files/etc/uci-defaults https://github.com/eearphon/Actions-OpenWrt/raw/main/99-default-settings
+
 rm -rf .config tmp/
 cat >> .config <<EOF
 CONFIG_TARGET_x86=y
