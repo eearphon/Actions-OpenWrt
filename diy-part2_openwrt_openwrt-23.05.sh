@@ -20,10 +20,7 @@
 #sed -i 's/OpenWrt/P3TERX-Router/g' package/base-files/files/bin/config_generate
 
 # Default settings
-#wget -P package/base-files/files/etc/uci-defaults https://github.com/eearphon/Actions-OpenWrt/raw/main/99-default-settings
-ls -l package/base-files/files/etc/uci-defaults
 [ -f $GITHUB_WORKSPACE/99-default-settings ] && cp -f $GITHUB_WORKSPACE/99-default-settings package/base-files/files/etc/uci-defaults/
-ls -l package/base-files/files/etc/uci-defaults
 
 rm -rf .config tmp/
 cat >> .config <<EOF
