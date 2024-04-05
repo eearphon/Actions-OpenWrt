@@ -49,6 +49,7 @@ CONFIG_PACKAGE_block-mount=y
 CONFIG_PACKAGE_dockerd=y
 # CONFIG_TARGET_ROOTFS_EXT4FS is not set
 CONFIG_PACKAGE_mount-utils=y
+CONFIG_PACKAGE_kmod-fs-ext4=y
 EOF
 
 rm -rf feeds/packages/lang/golang
@@ -65,6 +66,7 @@ sed -i '/^PKG_SOURCE_VERSION:=/c\PKG_SOURCE_VERSION:=9018e35d12d2e20c9ec01b8a858
 sed -i '/^PKG_MIRROR_HASH:=/c\PKG_MIRROR_HASH:=2114a78d15d274a3b4fc5bc349d6de92969fa172ccc1e4359c7e228e9181185c' feeds/packages/net/transmission-web-control/Makefile
 sed -i '/DEPENDS:=/d' feeds/packages/net/transmission-web-control/Makefile
 
+rm -rf package/Rclone-OpenWrt
 git clone https://github.com/eearphon/Rclone-OpenWrt package/Rclone-OpenWrt
 cat >> .config <<EOF
 CONFIG_PACKAGE_luci-app-rclone=y
