@@ -73,5 +73,5 @@ EOF
 
 #src-git lienol https://github.com/Lienol/openwrt-package.git;main
 cat >> .config <<EOF
-CONFIG_PACKAGE_luci-app-openvpn-server=y
+CONFIG_PACKAGE_luci-app-softethervpn=y
 EOF
