@@ -21,9 +21,9 @@
 
 # Default settings
 #wget -P package/base-files/files/etc/uci-defaults https://github.com/eearphon/Actions-OpenWrt/raw/main/99-default-settings
-ll openwrt/package/base-files/files/etc/uci-defaults
+ls -l openwrt/package/base-files/files/etc/uci-defaults
 if [ -f $GITHUB_WORKSPACE/99-default-settings ] && cp -f $GITHUB_WORKSPACE/99-default-settings openwrt/package/base-files/files/etc/uci-defaults/
-ll openwrt/package/base-files/files/etc/uci-defaults
+ls -l openwrt/package/base-files/files/etc/uci-defaults
 
 rm -rf .config tmp/
 cat >> .config <<EOF
