@@ -34,7 +34,7 @@ jobs:
         env:
           ARCH: ${{ matrix.arch }}-${{ matrix.release }}
           PACKAGES: ${{ env.BUILD_PACKAGES }}
-          EXTRA_FEEDS: src-git lienol https://github.com/Lienol/openwrt-package.git;main
+          EXTRA_FEEDS: 'src-git lienol https://github.com/Lienol/openwrt-package.git;main'
 
       - name: Store packages
         uses: actions/upload-artifact@v2
