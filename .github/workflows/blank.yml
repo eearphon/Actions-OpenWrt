@@ -43,7 +43,6 @@ jobs:
           go env
           go install github.com/rocktimsaikia/git-down@latest
           ls -al /home/runner/go/bin
-          which git-down
           cd /tmp
-          git-down https://github.com/coolsnowwolf/luci/tree/master/applications/luci-app-rclone
+          /home/runner/go/bin/git-down https://github.com/coolsnowwolf/luci/tree/master/applications/luci-app-rclone
           ls -al
