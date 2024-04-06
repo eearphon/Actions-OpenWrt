@@ -39,6 +39,7 @@ jobs:
           ls -al /
           df -hT
           env
+          which go
           go install github.com/rocktimsaikia/git-down@latest
           which git-down
           cd /tmp
