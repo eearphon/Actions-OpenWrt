@@ -39,9 +39,10 @@ jobs:
           ls -al /
           df -hT
           env
+          which go
           go env
           go install github.com/rocktimsaikia/git-down@latest
-          ls -al /home/runner/go/pkg/mod/github.com/rocktimsaikia
+          ls -al /home/runner/go/bin
           which git-down
           cd /tmp
           git-down https://github.com/coolsnowwolf/luci/tree/master/applications/luci-app-rclone
