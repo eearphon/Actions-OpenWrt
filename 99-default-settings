@@ -1,0 +1,11 @@
+#!/bin/sh
+[ -f /bin/bash ] && sed -i "/^root/s/\/bin\/ash/\/bin\/bash/g" /etc/passwd
+
+sed -i '/^option check_signature/s/^/#/' /etc/opkg.conf
+sed -i "/helloworld\|passwall\|lienol/s/^src/#src/g" /etc/opkg/distfeeds.conf
+sed -i "s/downloads.openwrt.org/mirrors.cloud.tencent.com\/openwrt/g" /etc/opkg/distfeeds.conf
+
+if [ -f /etc/config/fstab ]; then
+  uci show fstab | grep '/mnt/' | awk -F. '{system( "uci set " $1 "." $2 "'.enabled=\''1'\''")}'
+  uci commit fstab
+fi
