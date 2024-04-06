@@ -38,4 +38,8 @@ jobs:
           ls -al
           ls -al /
           df -hT
+          go install github.com/rocktimsaikia/git-down@latest
+          cd /tmp
+          git-down https://github.com/coolsnowwolf/luci/tree/master/applications/luci-app-rclone
+          ls -al
           env
