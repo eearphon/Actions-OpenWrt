@@ -88,3 +88,4 @@ EOF
 git clone https://github.com/coolsnowwolf/luci
 rm -rf feeds/luci/applications/luci-app-hd-idle
 cp -a luci/applications/luci-app-hd-idle feeds/luci/applications/
+rm -rf luci
