@@ -82,10 +82,14 @@ sed -i '/DEPENDS:=/d' feeds/packages/net/transmission-web-control/Makefile
 cat >> .config <<EOF
 CONFIG_PACKAGE_luci-app-softethervpn=y
 CONFIG_PACKAGE_luci-app-rclone=y
+CONFIG_PACKAGE_luci-lib-ipkg=y
 EOF
 
 #luci-app-hd-idle
+rm -rf luci
 git clone https://github.com/coolsnowwolf/luci
 rm -rf feeds/luci/applications/luci-app-hd-idle
 cp -a luci/applications/luci-app-hd-idle feeds/luci/applications/
+rm -rf feeds/luci/applications/luci-app-frps
+cp -a luci/applications/luci-app-frps feeds/luci/applications/
 rm -rf luci
