@@ -20,7 +20,8 @@
 #sed -i 's/OpenWrt/P3TERX-Router/g' package/base-files/files/bin/config_generate
 
 # Default settings
-[ -f $GITHUB_WORKSPACE/99-default-settings ] && cp -f $GITHUB_WORKSPACE/99-default-settings package/base-files/files/etc/uci-defaults/
+#[ -f $GITHUB_WORKSPACE/99-default-settings ] && cp -f $GITHUB_WORKSPACE/99-default-settings package/base-files/files/etc/uci-defaults/
+wget -P package/base-files/files/etc/uci-defaults https://github.com/eearphon/Actions-OpenWrt/raw/main/99-default-settings
 
 rm -rf .config tmp/
 cat >> .config <<EOF
@@ -70,14 +71,15 @@ sed -i '/^PKG_SOURCE_VERSION:=/c\PKG_SOURCE_VERSION:=9018e35d12d2e20c9ec01b8a858
 sed -i '/^PKG_MIRROR_HASH:=/c\PKG_MIRROR_HASH:=2114a78d15d274a3b4fc5bc349d6de92969fa172ccc1e4359c7e228e9181185c' feeds/packages/net/transmission-web-control/Makefile
 sed -i '/DEPENDS:=/d' feeds/packages/net/transmission-web-control/Makefile
 
-rm -rf package/Rclone-OpenWrt
-git clone https://github.com/eearphon/Rclone-OpenWrt package/Rclone-OpenWrt
-cat >> .config <<EOF
-CONFIG_PACKAGE_luci-app-rclone=y
-CONFIG_PACKAGE_luci-lib-ipkg=y
-EOF
+#rm -rf package/Rclone-OpenWrt
+#git clone https://github.com/eearphon/Rclone-OpenWrt package/Rclone-OpenWrt
+#cat >> .config <<EOF
+#CONFIG_PACKAGE_luci-app-rclone=y
+#CONFIG_PACKAGE_luci-lib-ipkg=y
+#EOF
 
-#src-git lienol https://github.com/Lienol/openwrt-package.git;main
+#src-git eearphon https://github.com/eearphon/openwrt-packages.git;main
 cat >> .config <<EOF
 CONFIG_PACKAGE_luci-app-softethervpn=y
+CONFIG_PACKAGE_luci-app-rclone=y
 EOF
