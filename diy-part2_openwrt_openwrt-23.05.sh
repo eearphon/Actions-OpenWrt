@@ -83,3 +83,8 @@ cat >> .config <<EOF
 CONFIG_PACKAGE_luci-app-softethervpn=y
 CONFIG_PACKAGE_luci-app-rclone=y
 EOF
+
+#luci-app-hd-idle
+git clone https://github.com/coolsnowwolf/luci
+rm -rf feeds/luci/applications/luci-app-hd-idle
+cp -a luci/applications/luci-app-hd-idle feeds/luci/applications/
