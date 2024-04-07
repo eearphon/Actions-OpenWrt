@@ -42,6 +42,9 @@ CONFIG_PACKAGE_kmod-fuse=y
 # CONFIG_PACKAGE_automount is not set
 # CONFIG_PACKAGE_autosamba is not set
 CONFIG_PACKAGE_luci-app-dockerman=y
+CONFIG_PACKAGE_luci-proto-ipv6=y
+CONFIG_PACKAGE_odhcp6c=y
+CONFIG_PACKAGE_odhcpd-ipv6only=y
 EOF
 
 #CONFIG_PACKAGE_ipv6helper=y
@@ -68,7 +71,7 @@ rm -rf myfeeds
 
 sed -i '/^PKG_SOURCE_DATE:=/c\PKG_SOURCE_DATE:=2024-03-20' feeds/packages/net/transmission-web-control/Makefile
 sed -i '/^PKG_SOURCE_VERSION:=/c\PKG_SOURCE_VERSION:=9018e35d12d2e20c9ec01b8a858ecaa2c3ce96f4' feeds/packages/net/transmission-web-control/Makefile
-sed -i '/^PKG_MIRROR_HASH:=/c\PKG_MIRROR_HASH:=' feeds/packages/net/transmission-web-control/Makefile
+sed -i '/^PKG_MIRROR_HASH:=/c\PKG_MIRROR_HASH:=2114a78d15d274a3b4fc5bc349d6de92969fa172ccc1e4359c7e228e9181185c' feeds/packages/net/transmission-web-control/Makefile
 sed -i '/DEPENDS:=/d' feeds/packages/net/transmission-web-control/Makefile
 
 cat >> .config <<EOF
