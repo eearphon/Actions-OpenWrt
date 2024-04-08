@@ -90,6 +90,11 @@ rm -rf luci
 git clone https://github.com/coolsnowwolf/luci
 rm -rf feeds/luci/applications/luci-app-hd-idle
 cp -a luci/applications/luci-app-hd-idle feeds/luci/applications/
-rm -rf feeds/luci/applications/luci-app-frps
-cp -a luci/applications/luci-app-frps feeds/luci/applications/
 rm -rf luci
+
+#luci-app-frps
+rm -rf openwrt-packages
+git clone https://github.com/kiddin9/openwrt-packages
+rm -rf feeds/luci/applications/luci-app-frps
+cp -a openwrt-packages/applications/luci-app-frps feeds/luci/applications/
+rm -rf openwrt-packages
