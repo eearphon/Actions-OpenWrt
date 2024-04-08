@@ -96,5 +96,5 @@ rm -rf luci
 rm -rf openwrt-packages
 git clone https://github.com/kiddin9/openwrt-packages
 rm -rf feeds/luci/applications/luci-app-frps
-cp -a openwrt-packages/applications/luci-app-frps feeds/luci/applications/
+cp -a openwrt-packages/luci-app-frps feeds/luci/applications/
 rm -rf openwrt-packages
