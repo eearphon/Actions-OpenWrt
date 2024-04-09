@@ -85,16 +85,13 @@ CONFIG_PACKAGE_luci-app-rclone=y
 CONFIG_PACKAGE_luci-lib-ipkg=y
 EOF
 
-#luci-app-hd-idle
-rm -rf luci
-git clone https://github.com/coolsnowwolf/luci
+#replace luci-app
+rm -rf mytmp
+git clone https://github.com/coolsnowwolf/luci mytmp
 rm -rf feeds/luci/applications/luci-app-hd-idle
-cp -a luci/applications/luci-app-hd-idle feeds/luci/applications/
-rm -rf luci
-
-#luci-app-frps
-rm -rf openwrt-packages
-git clone https://github.com/kiddin9/openwrt-packages
+cp -a mytmp/applications/luci-app-hd-idle feeds/luci/applications/
+ln -s feeds/luci/applications/luci-app-hd-idle/po/zh-cn feeds/luci/applications/luci-app-hd-idle/po/zh_Hans
 rm -rf feeds/luci/applications/luci-app-frps
-cp -a openwrt-packages/luci-app-frps feeds/luci/applications/
-rm -rf openwrt-packages
+cp -a mytmp/luci-app-frps feeds/luci/applications/
+ln -s feeds/luci/applications/luci-app-frps/po/zh-cn feeds/luci/applications/luci-app-frps/po/zh_Hans
+rm -rf mytmp
