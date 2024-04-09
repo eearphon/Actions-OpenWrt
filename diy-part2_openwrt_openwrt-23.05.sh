@@ -92,6 +92,6 @@ rm -rf feeds/luci/applications/luci-app-hd-idle
 cp -a mytmp/applications/luci-app-hd-idle feeds/luci/applications/
 ln -s feeds/luci/applications/luci-app-hd-idle/po/zh-cn feeds/luci/applications/luci-app-hd-idle/po/zh_Hans
 rm -rf feeds/luci/applications/luci-app-frps
-cp -a mytmp/luci-app-frps feeds/luci/applications/
+cp -a mytmp/applications/luci-app-frps feeds/luci/applications/
 ln -s feeds/luci/applications/luci-app-frps/po/zh-cn feeds/luci/applications/luci-app-frps/po/zh_Hans
 rm -rf mytmp
