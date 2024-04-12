@@ -69,10 +69,11 @@ EOF
 #cp -a myfeeds/luci/applications/luci-app-transmission feeds/luci/applications/
 #rm -rf myfeeds
 
-sed -i '/^PKG_SOURCE_DATE:=/c\PKG_SOURCE_DATE:=2024-03-20' feeds/packages/net/transmission-web-control/Makefile
-sed -i '/^PKG_SOURCE_VERSION:=/c\PKG_SOURCE_VERSION:=9018e35d12d2e20c9ec01b8a858ecaa2c3ce96f4' feeds/packages/net/transmission-web-control/Makefile
-sed -i '/^PKG_MIRROR_HASH:=/c\PKG_MIRROR_HASH:=2114a78d15d274a3b4fc5bc349d6de92969fa172ccc1e4359c7e228e9181185c' feeds/packages/net/transmission-web-control/Makefile
+sed -i '/^PKG_SOURCE_DATE:=/c\PKG_SOURCE_DATE:=2024-04-09' feeds/packages/net/transmission-web-control/Makefile
+sed -i '/^PKG_SOURCE_VERSION:=/c\PKG_SOURCE_VERSION:=f02a47aff2680de10c2269e22a3d0b37a318dbcd' feeds/packages/net/transmission-web-control/Makefile
+sed -i '/^PKG_MIRROR_HASH:=/c\PKG_MIRROR_HASH:=265e413f24427dda4ec4a4bb24d67876ebe6245850bd27855bc6f475a923094f' feeds/packages/net/transmission-web-control/Makefile
 sed -i '/DEPENDS:=/d' feeds/packages/net/transmission-web-control/Makefile
+sed -i 's/transmission\/web/transmission\/public_html/g' feeds/packages/net/transmission-web-control/Makefile
 
 cat >> .config <<EOF
 CONFIG_PACKAGE_transmission-web-control=y
