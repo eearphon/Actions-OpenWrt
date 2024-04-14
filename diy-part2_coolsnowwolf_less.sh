@@ -20,7 +20,7 @@
 #sed -i 's/OpenWrt/P3TERX-Router/g' package/base-files/files/bin/config_generate
 
 # Default settings
-#[ -f $GITHUB_WORKSPACE/99-default-settings ] && cp -f $GITHUB_WORKSPACE/99-default-settings package/base-files/files/etc/uci-defaults/
+[ -f $GITHUB_WORKSPACE/99-default-settings ] && cp -f $GITHUB_WORKSPACE/99-default-settings package/base-files/files/etc/uci-defaults/
 
 rm -rf .config tmp/
 make defconfig
@@ -31,6 +31,8 @@ CONFIG_PACKAGE_screen=y
 # CONFIG_PACKAGE_automount is not set
 # CONFIG_PACKAGE_autosamba is not set
 CONFIG_PACKAGE_luci-proto-ipv6=y
+CONFIG_PACKAGE_odhcp6c=y
+CONFIG_PACKAGE_odhcpd-ipv6only=y
 EOF
 
 sed -i '/^PKG_SOURCE_DATE:=/c\PKG_SOURCE_DATE:=2024-04-09' feeds/packages/net/transmission-web-control/Makefile
