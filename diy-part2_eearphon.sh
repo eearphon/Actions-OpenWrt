@@ -62,5 +62,4 @@ cat >> .config <<EOF
 CONFIG_PACKAGE_luci-app-transmission=y
 EOF
 
-#Fri Mar 29 19:02:39 CST 2024
-sed -i '/^KERNEL_PATCHVER:=/c\KERNEL_PATCHVER:=5.15' target/linux/x86/Makefile
+#sed -i '/^KERNEL_PATCHVER:=/c\KERNEL_PATCHVER:=5.15' target/linux/x86/Makefile
