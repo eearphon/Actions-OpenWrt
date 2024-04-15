@@ -96,7 +96,7 @@ jobs:
         cd openwrt
         [ -n "${{ github.event.inputs.checkout }}" ] && git checkout ${{ github.event.inputs.checkout }}
         [ -e $GITHUB_WORKSPACE/$DIY_P1_SH ] && $GITHUB_WORKSPACE/$DIY_P1_SH
-        [ -n "${{ github.event.inputs.kernel_ver }}" ] && sed -i '/^KERNEL_PATCHVER:=/c\KERNEL_PATCHVER:=${{ github.event.inputs.kernel_ver }}' target/linux/x86/Makefile
+        [ -n "${{ github.event.inputs.kernel_ver }}" ] && [ -e target/linux/x86/config-${{ github.event.inputs.kernel_ver }} ] && sed -i '/^KERNEL_PATCHVER:=/c\KERNEL_PATCHVER:=${{ github.event.inputs.kernel_ver }}' target/linux/x86/Makefile
         pwd && echo $GITHUB_WORKSPACE/$DIY_P1_SH && ls -l
 
     - name: Update feeds
