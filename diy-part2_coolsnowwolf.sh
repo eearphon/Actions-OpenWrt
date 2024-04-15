@@ -58,16 +58,13 @@ cat >> .config <<EOF
 CONFIG_PACKAGE_luci-app-alist=y
 EOF
 
-#mkdir myfeeds
-#cd myfeeds
-#git clone https://github.com/openwrt/packages
-#git clone https://github.com/openwrt/luci
-#cd ..
-#rm -rf feeds/packages/net/transmission feeds/packages/net/transmission-web-control feeds/luci/applications/luci-app-transmission
-#cp -a myfeeds/packages/net/transmission feeds/packages/net/
+git clone --single-branch https://github.com/openwrt/packages myfeeds/packages
+git clone --single-branch https://github.com/openwrt/luci myfeeds/luci
+rm -rf feeds/packages/net/transmission
+cp -a myfeeds/packages/net/transmission feeds/packages/net/
 #cp -a myfeeds/packages/net/transmission-web-control feeds/packages/net/
 #cp -a myfeeds/luci/applications/luci-app-transmission feeds/luci/applications/
-#rm -rf myfeeds
+rm -rf myfeeds
 
 sed -i '/^PKG_SOURCE_DATE:=/c\PKG_SOURCE_DATE:=2024-04-09' feeds/packages/net/transmission-web-control/Makefile
 sed -i '/^PKG_SOURCE_VERSION:=/c\PKG_SOURCE_VERSION:=f02a47aff2680de10c2269e22a3d0b37a318dbcd' feeds/packages/net/transmission-web-control/Makefile
@@ -77,6 +74,7 @@ sed -i 's/transmission\/web/transmission\/public_html/g' feeds/packages/net/tran
 
 cat >> .config <<EOF
 CONFIG_PACKAGE_transmission-web-control=y
+CONFIG_PACKAGE_transmission-daemon=y
 EOF
 
 #Fri Mar 29 19:02:39 CST 2024
