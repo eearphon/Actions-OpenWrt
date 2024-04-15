@@ -20,7 +20,7 @@
 #sed -i 's/OpenWrt/P3TERX-Router/g' package/base-files/files/bin/config_generate
 
 # Default settings
-[ -f $GITHUB_WORKSPACE/99-default-settings ] && cp -f $GITHUB_WORKSPACE/99-default-settings package/base-files/files/etc/uci-defaults/
+[ -f $GITHUB_WORKSPACE/99-default-settings ] && cp -f $GITHUB_WORKSPACE/99-default-settings package/base-files/files/etc/uci-defaults/99-default-settings2
 
 rm -rf .config tmp/
 make defconfig
