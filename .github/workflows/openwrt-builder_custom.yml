@@ -24,6 +24,10 @@ on:
         description: 'diy-partx_SUFFIX.sh (Lienol_23.05)'
         required: false
         default: ''
+      append2config:
+        description: 'lines append to .config(separated by space)'
+        required: false
+        default: ''
       kernel_ver:
         description: 'kernel version'
         required: false
@@ -112,6 +116,7 @@ jobs:
         [ -e $DIY_P2_SH ] && chmod +x $DIY_P2_SH
         cd openwrt
         [ -e $GITHUB_WORKSPACE/$DIY_P2_SH ] && $GITHUB_WORKSPACE/$DIY_P2_SH
+        [ -n "${{ github.event.inputs.append2config }}" ] && echo "${{ github.event.inputs.append2config }}" | awk '{ for(i=1; i<=NF; i++) print $i }' >> .config
         echo "VERSION_KERNEL=$(./scripts/getver.sh)_$(grep 'KERNEL_PATCHVER:=' target/linux/x86/Makefile | awk -F"=" '{print $2}')" >> $GITHUB_ENV
         sed -i -E "/lan\) ipad=/s/([0-9]{1,3}\.){3}[0-9]{1,3}/${{ env.LAN_IP }}/" package/base-files/files/bin/config_generate
 
