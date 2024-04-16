@@ -1,0 +1,44 @@
+#GitHub CI action to build packages via SDK using official OpenWrt SDK Docker containers.
+name: Build packages via OpenWrt SDK
+
+on:
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      bpackages:
+        description: 'packages to build'
+        required: true
+        default: 'vim'
+
+env:
+  BUILD_PACKAGES: ${{ github.event.inputs.bpackages }}
+
+jobs:
+  build:
+    name: ${{ matrix.arch }}-${{ matrix.release }} build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        release:
+          - 23.05-SNAPSHOT
+        arch:
+          - x86_64
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build
+        uses: openwrt/gh-action-sdk@main
+        env:
+          ARCH: ${{ matrix.arch }}-${{ matrix.release }}
+          PACKAGES: ${{ env.BUILD_PACKAGES }}
+          EXTRA_FEEDS: src-git|lienol|https://github.com/Lienol/openwrt-package.git;main
+
+      - name: Store packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.arch}}-packages
+          #path: bin/packages/${{ matrix.arch }}/packages/*.ipk
+          path: bin/*
