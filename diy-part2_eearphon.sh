@@ -32,7 +32,6 @@ CONFIG_PACKAGE_iperf3=y
 CONFIG_PACKAGE_open-vm-tools=y
 CONFIG_PACKAGE_openssh-sftp-server=y
 CONFIG_PACKAGE_screen=y
-CONFIG_PACKAGE_luci-app-alist=y
 CONFIG_PACKAGE_luci-app-passwall=y
 CONFIG_PACKAGE_luci-app-passwall_INCLUDE_NaiveProxy=y
 CONFIG_PACKAGE_luci-app-passwall2=y
@@ -60,6 +59,7 @@ EOF
 
 cat >> .config <<EOF
 CONFIG_PACKAGE_luci-app-transmission=y
+CONFIG_PACKAGE_luci-app-aliyundrive-webdav=y
 EOF
 
 #sed -i '/^KERNEL_PATCHVER:=/c\KERNEL_PATCHVER:=5.15' target/linux/x86/Makefile
