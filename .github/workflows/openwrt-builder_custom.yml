@@ -24,8 +24,12 @@ on:
         description: 'diy-partx_SUFFIX.sh (Lienol_23.05)'
         required: false
         default: ''
+      append2feeds_conf:
+        description: 'lines append to feeds.conf.default(separated by commas)'
+        required: false
+        default: ''
       append2config:
-        description: 'lines append to .config(separated by space)'
+        description: 'lines append to .config(separated by commas)'
         required: false
         default: ''
       kernel_ver:
@@ -100,6 +104,7 @@ jobs:
         cd openwrt
         [ -n "${{ github.event.inputs.checkout }}" ] && git checkout ${{ github.event.inputs.checkout }}
         [ -e $GITHUB_WORKSPACE/$DIY_P1_SH ] && $GITHUB_WORKSPACE/$DIY_P1_SH
+        [ -n "${{ github.event.inputs.append2feeds_conf }}" ] && echo "${{ github.event.inputs.append2feeds_conf }}" | awk -F"," '{ for(i=1; i<=NF; i++) print $i }' | awk '{$1=$1}1' >> feeds.conf.default
         [ -n "${{ github.event.inputs.kernel_ver }}" ] && [ -e target/linux/x86/config-${{ github.event.inputs.kernel_ver }} ] && sed -i '/^KERNEL_PATCHVER:=/c\KERNEL_PATCHVER:=${{ github.event.inputs.kernel_ver }}' target/linux/x86/Makefile
         pwd && echo $GITHUB_WORKSPACE/$DIY_P1_SH && ls -l
 
@@ -116,7 +121,7 @@ jobs:
         [ -e $DIY_P2_SH ] && chmod +x $DIY_P2_SH
         cd openwrt
         [ -e $GITHUB_WORKSPACE/$DIY_P2_SH ] && $GITHUB_WORKSPACE/$DIY_P2_SH
-        [ -n "${{ github.event.inputs.append2config }}" ] && echo "${{ github.event.inputs.append2config }}" | awk '{ for(i=1; i<=NF; i++) print $i }' >> .config
+        [ -n "${{ github.event.inputs.append2config }}" ] && echo "${{ github.event.inputs.append2config }}" | awk -F"," '{ for(i=1; i<=NF; i++) print $i }' | awk '{$1=$1}1' >> .config
         echo "VERSION_KERNEL=$(./scripts/getver.sh)_$(grep 'KERNEL_PATCHVER:=' target/linux/x86/Makefile | awk -F"=" '{print $2}')" >> $GITHUB_ENV
         sed -i -E "/lan\) ipad=/s/([0-9]{1,3}\.){3}[0-9]{1,3}/${{ env.LAN_IP }}/" package/base-files/files/bin/config_generate
 
@@ -205,7 +210,7 @@ jobs:
       uses: dev-drprasad/delete-older-releases@master
       if: steps.compile.outputs.status == 'success' && env.UPLOAD_RELEASE == 'true' && !cancelled()
       with:
-        keep_latest: 20
+        keep_latest: 50
         delete_tags: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
