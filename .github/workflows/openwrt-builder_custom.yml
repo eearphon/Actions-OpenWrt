@@ -101,6 +101,10 @@ jobs:
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
         [ -e $DIY_P1_SH ] || (DIY_P1_SH="${DIY_P1_SH%_*}.sh"; echo "DIY_P1_SH=$DIY_P1_SH" >> $GITHUB_ENV)
+        echo $GITHUB_WORKSPACE/$DIY_P1_SH
+
+    - name: Load custom feeds 2
+      run: |
         cd openwrt
         [ -n "${{ github.event.inputs.checkout }}" ] && git checkout ${{ github.event.inputs.checkout }}
         [ -e $GITHUB_WORKSPACE/$DIY_P1_SH ] && sh $GITHUB_WORKSPACE/$DIY_P1_SH
