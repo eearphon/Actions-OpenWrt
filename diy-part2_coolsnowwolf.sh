@@ -32,11 +32,12 @@ CONFIG_PACKAGE_iperf3=y
 CONFIG_PACKAGE_open-vm-tools=y
 CONFIG_PACKAGE_openssh-sftp-server=y
 CONFIG_PACKAGE_screen=y
-CONFIG_PACKAGE_luci-app-alist=y
 CONFIG_PACKAGE_luci-app-passwall=y
 CONFIG_PACKAGE_luci-app-passwall_INCLUDE_NaiveProxy=y
 CONFIG_PACKAGE_luci-app-passwall2=y
 CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_NaiveProxy=y
+CONFIG_PACKAGE_luci-app-ssr-plus=y
+CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_NaiveProxy=y
 CONFIG_PACKAGE_luci-app-rclone=y
 CONFIG_PACKAGE_kmod-fuse=y
 # CONFIG_PACKAGE_automount is not set
@@ -45,6 +46,8 @@ CONFIG_PACKAGE_luci-app-dockerman=y
 CONFIG_PACKAGE_luci-proto-ipv6=y
 CONFIG_PACKAGE_odhcp6c=y
 CONFIG_PACKAGE_odhcpd-ipv6only=y
+CONFIG_PACKAGE_luci-app-transmission=y
+CONFIG_PACKAGE_luci-app-aliyundrive-webdav=y
 EOF
 
 #CONFIG_PACKAGE_ipv6helper=y
@@ -52,27 +55,20 @@ EOF
 rm -rf feeds/packages/lang/golang
 git clone https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
 
+#luci-app-alist
 rm -rf package/alist
 git clone https://github.com/sbwml/luci-app-alist package/alist
 cat >> .config <<EOF
 CONFIG_PACKAGE_luci-app-alist=y
 EOF
 
-git clone --single-branch https://github.com/openwrt/packages myfeeds/packages
-git clone --single-branch https://github.com/openwrt/luci myfeeds/luci
-rm -rf feeds/packages/net/transmission
-cp -a myfeeds/packages/net/transmission feeds/packages/net/
-#cp -a myfeeds/packages/net/transmission-web-control feeds/packages/net/
-#cp -a myfeeds/luci/applications/luci-app-transmission feeds/luci/applications/
-rm -rf myfeeds
+#luci-app-aliyundrive-webdav
+git clone --single-branch https://github.com/messense/aliyundrive-webdav
+rm -rf feeds/packages/multimedia/aliyundrive-webdav feeds/luci/applications/luci-app-aliyundrive-webdav
+cp -a aliyundrive-webdav/openwrt/aliyundrive-webdav feeds/packages/multimedia/
+cp -a aliyundrive-webdav/openwrt/luci-app-aliyundrive-webdav feeds/luci/applications/
+rm -rf aliyundrive-webdav
 
-sed -i '/^PKG_SOURCE_DATE:=/c\PKG_SOURCE_DATE:=2024-04-09' feeds/packages/net/transmission-web-control/Makefile
-sed -i '/^PKG_SOURCE_VERSION:=/c\PKG_SOURCE_VERSION:=f02a47aff2680de10c2269e22a3d0b37a318dbcd' feeds/packages/net/transmission-web-control/Makefile
-sed -i '/^PKG_MIRROR_HASH:=/c\PKG_MIRROR_HASH:=265e413f24427dda4ec4a4bb24d67876ebe6245850bd27855bc6f475a923094f' feeds/packages/net/transmission-web-control/Makefile
-sed -i '/DEPENDS:=/d' feeds/packages/net/transmission-web-control/Makefile
-sed -i 's/transmission\/web/transmission\/public_html/g' feeds/packages/net/transmission-web-control/Makefile
-
-cat >> .config <<EOF
-CONFIG_PACKAGE_transmission-web-control=y
-CONFIG_PACKAGE_transmission-daemon=y
-EOF
+#rclone
+sed -i 's/PKG_VERSION:=1.61.1/PKG_VERSION:=1.66.0/' feeds/packages/net/rclone/Makefile
+sed -i 's/PKG_HASH:=f9fb7bae1f19896351db64e3713b67bfd151c49b2b28e6c6233adf67dbc2c899/PKG_HASH:=9249391867044a0fa4c5a948b46a03b320706b4d5c4d59db9d4aeff8d47cade2/' feeds/packages/net/rclone/Makefile
