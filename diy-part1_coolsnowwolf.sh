@@ -21,7 +21,8 @@
 #git checkout dc4d37c71423bd48b02f614414b149fa192d3406
 
 cat >> ./feeds.conf.default <<EOF
-src-git passwall_packages https://github.com/xiaorouji/openwrt-passwall-packages.git;main
-src-git passwall https://github.com/xiaorouji/openwrt-passwall.git;main
+src-git passwall_packages https://github.com/xiaorouji/openwrt-passwall-packages.git
+src-git passwall https://github.com/xiaorouji/openwrt-passwall.git
 src-git passwall2 https://github.com/xiaorouji/openwrt-passwall2.git
+src-git helloworld https://github.com/fw876/helloworld.git
 EOF
