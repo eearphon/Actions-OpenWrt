@@ -72,3 +72,5 @@ rm -rf aliyundrive-webdav
 #rclone
 sed -i 's/PKG_VERSION:=1.61.1/PKG_VERSION:=1.66.0/' feeds/packages/net/rclone/Makefile
 sed -i 's/PKG_HASH:=f9fb7bae1f19896351db64e3713b67bfd151c49b2b28e6c6233adf67dbc2c899/PKG_HASH:=9249391867044a0fa4c5a948b46a03b320706b4d5c4d59db9d4aeff8d47cade2/' feeds/packages/net/rclone/Makefile
+
+sh $GITHUB_WORKSPACE/my-transmission.sh
