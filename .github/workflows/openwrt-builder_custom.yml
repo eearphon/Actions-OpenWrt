@@ -20,6 +20,11 @@ on:
         description: 'repo_url;branch (https://github.com/Lienol/openwrt;22.03)'
         required: true
         default: 'https://github.com/coolsnowwolf/lede'
+      luci_branch:
+        description: 'coolsnowwolf/luci;openwrt-23.05'
+        type: boolean
+        required: false
+        default: ''
       diy-partx_suffix:
         description: 'diy-partx_SUFFIX.sh (Lienol_23.05)'
         required: false
@@ -109,6 +114,7 @@ jobs:
         [ -n "${{ github.event.inputs.checkout }}" ] && git checkout ${{ github.event.inputs.checkout }}
         [ -e $GITHUB_WORKSPACE/$DIY_P1_SH ] && sh $GITHUB_WORKSPACE/$DIY_P1_SH
         [ -n "${{ github.event.inputs.append2feeds_conf }}" ] && echo "${{ github.event.inputs.append2feeds_conf }}" | awk -F"," '{ for(i=1; i<=NF; i++) print $i }' | awk '{$1=$1}1' >> feeds.conf.default
+        [ -n "${{ github.event.inputs.luci_branch }}" ] && sed -i -e '2s/^/#/' -e '3s/^#//' feeds.conf.default
         sed -e '/^1/w tmpfile1' -e '/^1/d' feeds.conf.default > tmpfile2 && sed -i 's/^1//' tmpfile1 && cat tmpfile1 tmpfile2 > feeds.conf.default
         cat feeds.conf.default
         [ -n "${{ github.event.inputs.kernel_ver }}" ] && [ -e target/linux/x86/config-${{ github.event.inputs.kernel_ver }} ] && sed -i '/^KERNEL_PATCHVER:=/c\KERNEL_PATCHVER:=${{ github.event.inputs.kernel_ver }}' target/linux/x86/Makefile
