@@ -16,7 +16,7 @@ on:
   repository_dispatch:
   workflow_dispatch:
     inputs:
-      repo:
+      repourl:
         description: 'repo_url;branch (https://github.com/Lienol/openwrt;22.03)'
         required: true
         default: 'https://github.com/coolsnowwolf/lede'
@@ -24,7 +24,7 @@ on:
         description: 'coolsnowwolf/luci;openwrt-23.05'
         type: boolean
         required: false
-        default: ''
+        default: false
       diy-partx_suffix:
         description: 'diy-partx_SUFFIX.sh (Lienol_23.05)'
         required: false
@@ -38,7 +38,7 @@ on:
         required: false
         default: ''
       kernel_ver:
-        description: 'kernel version'
+        description: 'kernel version(only x86)'
         required: false
         default: ''
       checkout:
@@ -85,13 +85,19 @@ jobs:
         sudo timedatectl set-timezone "$TZ"
         sudo mkdir -p /mnt/workdir
         sudo chown $USER:$GROUPS /mnt/workdir
-        eval $(echo '${{ github.event.inputs.repo }}' | awk -F";" '{print "var1="$1";var2="$2}')
+        eval $(echo '${{ github.event.inputs.repourl }}' | awk -F";" '{print "var1="$1";repobranch="$2}')
         echo "REPO_URL=$var1" >> $GITHUB_ENV
-        echo "REPO_BRANCH=$var2" >> $GITHUB_ENV
-        var3=$(echo '${{ github.event.inputs.repo }}' | awk -F"/" '{print $4'})
-        [ -n "$var2" ] && var2="_$var2"
-        [ -n "${{ github.event.inputs.diy-partx_suffix }}" ] || echo "DIY_P1_SH=diy-part1_${var3}${var2}.sh" >> $GITHUB_ENV
-        [ -n "${{ github.event.inputs.diy-partx_suffix }}" ] || echo "DIY_P2_SH=diy-part2_${var3}${var2}.sh" >> $GITHUB_ENV
+        echo "REPO_BRANCH=$repobranch" >> $GITHUB_ENV
+        author=$(echo '${{ github.event.inputs.repourl }}' | awk -F"/" '{print $4}')
+        [ -n "$repobranch" ] && repobranch="_$repobranch"
+        if [ -n "${{ github.event.inputs.diy-partx_suffix }}" ]; then
+          if [ ! -e $DIY_P1_SH ]; then
+            echo "DIY_P1_SH=diy-part1_${author}.sh" >> $GITHUB_ENV
+          fi
+        else
+          echo "DIY_P1_SH=diy-part1_${author}${repobranch}.sh" >> $GITHUB_ENV
+          echo "DIY_P2_SH=diy-part2_${author}${repobranch}.sh" >> $GITHUB_ENV
+        fi
 
     - name: Clone source code
       working-directory: /mnt/workdir
@@ -103,20 +109,29 @@ jobs:
         ln -sf /mnt/workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
     - name: Load custom feeds
+      env:
+        A2FEEDS: ${{ github.event.inputs.append2feeds_conf }}
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-        [ -e $DIY_P1_SH ] || (DIY_P1_SH="${DIY_P1_SH%_*}.sh"; echo "DIY_P1_SH=$DIY_P1_SH" >> $GITHUB_ENV)
-        echo $GITHUB_WORKSPACE/$DIY_P1_SH
-
-    - name: Load custom feeds 2
-      run: |
         cd openwrt
         [ -n "${{ github.event.inputs.checkout }}" ] && git checkout ${{ github.event.inputs.checkout }}
         [ -e $GITHUB_WORKSPACE/$DIY_P1_SH ] && sh $GITHUB_WORKSPACE/$DIY_P1_SH
-        [ -n "${{ github.event.inputs.append2feeds_conf }}" ] && echo "${{ github.event.inputs.append2feeds_conf }}" | awk -F"," '{ for(i=1; i<=NF; i++) print $i }' | awk '{$1=$1}1' >> feeds.conf.default
-        [ -n "${{ github.event.inputs.luci_branch }}" ] && sed -i -e '2s/^/#/' -e '3s/^#//' feeds.conf.default
-        sed -e '/^1/w tmpfile1' -e '/^1/d' feeds.conf.default > tmpfile2 && sed -i 's/^1//' tmpfile1 && cat tmpfile1 tmpfile2 > feeds.conf.default
-        cat feeds.conf.default
+        if [ -n "$A2FEEDS" ]; then
+          IFS=',' read -ra array <<< "$A2FEEDS"
+          for aline in "${array[@]}"; do
+            trimmed_aline="$(echo "${aline}" | awk '{$1=$1}1')"
+            first_char="${trimmed_aline:0:1}"
+            if [ "$first_char" = "1" ]; then
+              delfirst="${trimmed_aline:1}"
+              echo "$delfirst" >> tmpfile1
+              sed -i "#^$delfirst#d" feeds.conf.default
+            else
+              echo "$trimmed_aline" >> feeds.conf.default
+            fi
+          done
+          [ -e tmpfile1 ] && mv feeds.conf.default tmpfile2 && cat tmpfile1 tmpfile2 > feeds.conf.default && rm -rf tmpfile1 tmpfile2
+        fi
+        [ "${{ github.event.inputs.luci_branch }}" == "true" ] && sed -i -e '/^src-git luci/s/^/#/' -e '/luci.git;openwrt-23.05/s/^#//' feeds.conf.default
         [ -n "${{ github.event.inputs.kernel_ver }}" ] && [ -e target/linux/x86/config-${{ github.event.inputs.kernel_ver }} ] && sed -i '/^KERNEL_PATCHVER:=/c\KERNEL_PATCHVER:=${{ github.event.inputs.kernel_ver }}' target/linux/x86/Makefile
         pwd && echo $GITHUB_WORKSPACE/$DIY_P1_SH && ls -l
 
@@ -133,6 +148,8 @@ jobs:
         cd openwrt
         [ -e $GITHUB_WORKSPACE/$DIY_P2_SH ] && sh $GITHUB_WORKSPACE/$DIY_P2_SH
         [ -n "${{ github.event.inputs.append2config }}" ] && echo "${{ github.event.inputs.append2config }}" | awk -F"," '{ for(i=1; i<=NF; i++) print $i }' | awk '{$1=$1}1' >> .config
+        grep -q ^new .config && sed -i '1,/^new/d' .config
+        cat .config
         echo "VERSION_KERNEL=$(./scripts/getver.sh)_$(grep 'KERNEL_PATCHVER:=' target/linux/x86/Makefile | awk -F"=" '{print $2}')" >> $GITHUB_ENV
         sed -i -E "/lan\) ipad=/s/([0-9]{1,3}\.){3}[0-9]{1,3}/${{ env.LAN_IP }}/" package/base-files/files/bin/config_generate
 
