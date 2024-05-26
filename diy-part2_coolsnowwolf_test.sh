@@ -45,10 +45,11 @@ CONFIG_PACKAGE_kmod-fuse=y
 CONFIG_PACKAGE_luci-app-dockerman=y
 CONFIG_PACKAGE_luci-proto-ipv6=y
 CONFIG_PACKAGE_odhcp6c=y
-##CONFIG_PACKAGE_odhcpd-ipv6only=y
+CONFIG_PACKAGE_odhcpd-ipv6only=y
 CONFIG_PACKAGE_luci-app-transmission=y
 CONFIG_PACKAGE_luci-app-aliyundrive-webdav=y
 CONFIG_PACKAGE_luci-app-alist=y
+CONFIG_PACKAGE_ftp=y
 EOF
 
 #rclone
