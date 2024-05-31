@@ -39,11 +39,5 @@ CONFIG_PACKAGE_luci-proto-ipv6=y
 CONFIG_PACKAGE_odhcp6c=y
 CONFIG_PACKAGE_odhcpd-ipv6only=y
 CONFIG_PACKAGE_luci-app-frpc=y
+CONFIG_PACKAGE_ftp=y
 EOF
-
-#CONFIG_PACKAGE_ipv6helper=y
-
-rm -rf feeds/packages/lang/golang
-git clone https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
-
-rm -rf package/feeds/packages/ipt2socks
