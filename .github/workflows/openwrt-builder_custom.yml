@@ -116,7 +116,7 @@ jobs:
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
         cd openwrt
         [ -n "${{ github.event.inputs.checkout }}" ] && git checkout ${{ github.event.inputs.checkout }}
-        [ -e $GITHUB_WORKSPACE/$DIY_P1_SH ] && sh $GITHUB_WORKSPACE/$DIY_P1_SH
+        [ -e $GITHUB_WORKSPACE/$DIY_P1_SH ] && sh $GITHUB_WORKSPACE/$DIY_P1_SH || echo "DIY_P1_SH=" >> $GITHUB_ENV
         if [ -n "$A2FEEDS" ]; then
           IFS=',' read -ra array <<< "$A2FEEDS"
           for aline in "${array[@]}"; do
@@ -147,7 +147,7 @@ jobs:
         [ -e files ] && mv files openwrt/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
         cd openwrt
-        [ -e $GITHUB_WORKSPACE/$DIY_P2_SH ] && sh $GITHUB_WORKSPACE/$DIY_P2_SH
+        [ -e $GITHUB_WORKSPACE/$DIY_P2_SH ] && sh $GITHUB_WORKSPACE/$DIY_P2_SH || echo "DIY_P2_SH=" >> $GITHUB_ENV
         [ -n "${{ github.event.inputs.append2config }}" ] && echo "${{ github.event.inputs.append2config }}" | awk -F"," '{ for(i=1; i<=NF; i++) print $i }' | awk '{$1=$1}1' >> .config
         grep -q ^new .config && sed -i '1,/^new/d' .config
         cat .config
