@@ -63,6 +63,7 @@ env:
  
 jobs:
   build:
+    if: github.event.repository.owner.id == github.event.sender.id
     runs-on: ubuntu-22.04
     permissions: 
       contents: write
@@ -150,7 +151,6 @@ jobs:
         [ -n "${{ github.event.inputs.append2config }}" ] && echo "${{ github.event.inputs.append2config }}" | awk -F"," '{ for(i=1; i<=NF; i++) print $i }' | awk '{$1=$1}1' >> .config
         grep -q ^new .config && sed -i '1,/^new/d' .config
         cat .config
-        echo "VERSION_KERNEL=$(./scripts/getver.sh)_$(grep 'KERNEL_PATCHVER:=' target/linux/x86/Makefile | awk -F"=" '{print $2}')" >> $GITHUB_ENV
         sed -i -E "/lan\) ipad=/s/([0-9]{1,3}\.){3}[0-9]{1,3}/${{ env.LAN_IP }}/" package/base-files/files/bin/config_generate
 
     - name: Download package
@@ -173,6 +173,7 @@ jobs:
         grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
         echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
+        echo "VERSION_KERNEL=$(./scripts/getver.sh)_$(awk -F'[_=]' '/^CONFIG_LINUX_/ && $5=="y" {printf "%s.%s", $3, $4}' .config)" >> $GITHUB_ENV
 
     - name: Check space usage
       if: (!cancelled())
@@ -190,6 +191,7 @@ jobs:
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: |
         cd openwrt/bin/targets/*/*
+        cp ../../../../.config config.full
         [ -e openwrt-x86-64-generic-squashfs-combined-efi.vmdk ] && mv openwrt-x86-64-generic-squashfs-combined-efi.vmdk openwrt-x86-64-generic-squashfs-combined-efi_${{ env.VERSION_KERNEL }}_${{ github.event.inputs.lanip }}.vmdk
         rm -rf packages
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
