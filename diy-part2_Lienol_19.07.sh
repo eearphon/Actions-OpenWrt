@@ -49,6 +49,3 @@ CONFIG_PACKAGE_fdisk=y
 CONFIG_PACKAGE_parted=y
 CONFIG_PACKAGE_usbutils=y
 EOF
-
-#repair# Error: opcode not supported on this processor: mips2 (mips2) `sync'
-sed -i -e '/PKG_USE_MIPS16:=0/d' -e '/PKG_BUILD_FLAGS/i\PKG_USE_MIPS16:=0' feeds/passwall_packages/dns2tcp/Makefile
