@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         release:
-          - 19.07.10
+          - openwrt-19.07
         arch:
           - aarch64_cortex-a53
 
