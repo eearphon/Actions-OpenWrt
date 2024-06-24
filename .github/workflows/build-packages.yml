@@ -20,9 +20,9 @@ jobs:
     strategy:
       matrix:
         release:
-          - 23.05-SNAPSHOT
+          - 19.07-SNAPSHOT
         arch:
-          - x86_64
+          - aarch64_cortex-a53
 
     steps:
       - uses: actions/checkout@v4
