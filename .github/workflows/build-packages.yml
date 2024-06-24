@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         release:
-          - 21.02-SNAPSHOT
+          - 19.07.10
         arch:
           - aarch64_cortex-a53
 
