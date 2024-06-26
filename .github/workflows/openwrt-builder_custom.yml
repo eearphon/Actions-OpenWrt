@@ -37,6 +37,11 @@ on:
         description: 'lines append to .config(separated by commas)'
         required: false
         default: ''
+      golangnewver:
+        description: 'use golang 22.x'
+        type: boolean
+        required: false
+        default: true
       kernel_ver:
         description: 'kernel version(only x86)'
         required: false
@@ -139,7 +144,10 @@ jobs:
         pwd && echo $GITHUB_WORKSPACE/$DIY_P1_SH && ls -l
 
     - name: Update feeds
-      run: cd openwrt && ./scripts/feeds update -a
+      run: |
+        cd openwrt
+        ./scripts/feeds update -a
+        [ "${{ github.event.inputs.golangnewver }}" == "true" ] && rm -rf feeds/packages/lang/golang && git clone https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
 
     - name: Install feeds
       run: cd openwrt && ./scripts/feeds install -a
@@ -195,8 +203,8 @@ jobs:
         cd openwrt
         mkdir -p assets
         cp .config assets/config.full
-        cp bin/targets/*/* assets/
-        rm bin/targets/*/*
+        cp bin/targets/*/* assets/ || echo
+        rm bin/targets/*/* || echo
         tar zcvf assets/packages.tgz bin/*
         cd assets/
         [ -e openwrt-x86-64-generic-squashfs-combined-efi.vmdk ] && mv openwrt-x86-64-generic-squashfs-combined-efi.vmdk openwrt-x86-64-generic-squashfs-combined-efi_${{ env.VERSION_KERNEL }}_${{ github.event.inputs.lanip }}.vmdk
