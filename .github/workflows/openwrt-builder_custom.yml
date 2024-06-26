@@ -125,7 +125,8 @@ jobs:
             if [ "$first_char" = "1" ]; then
               delfirst="${trimmed_aline:1}"
               echo "$delfirst" >> tmpfile1
-              sed -i "#^$delfirst#d" feeds.conf.default
+              part2=$(echo $delfirst | awk '{print $2}')
+              sed -i "/ $part2 /d" feeds.conf.default
             else
               echo "$trimmed_aline" >> feeds.conf.default
             fi
@@ -134,6 +135,7 @@ jobs:
         fi
         [ "${{ github.event.inputs.luci_branch }}" == "true" ] && sed -i -e '/^src-git luci/s/^/#/' -e '/luci.git;openwrt-23.05/s/^#//' feeds.conf.default
         [ -n "${{ github.event.inputs.kernel_ver }}" ] && [ -e target/linux/x86/config-${{ github.event.inputs.kernel_ver }} ] && sed -i '/^KERNEL_PATCHVER:=/c\KERNEL_PATCHVER:=${{ github.event.inputs.kernel_ver }}' target/linux/x86/Makefile
+        cat feeds.conf.default
         pwd && echo $GITHUB_WORKSPACE/$DIY_P1_SH && ls -l
 
     - name: Update feeds
@@ -190,10 +192,14 @@ jobs:
       id: organize
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: |
-        cd openwrt/bin/targets/*/*
-        cp ../../../../.config config.full
+        cd openwrt
+        mkdir -p assets
+        cp .config assets/config.full
+        cp bin/targets/*/* assets/
+        rm bin/targets/*/*
+        tar zcvf assets/packages.tgz bin/*
+        cd assets/
         [ -e openwrt-x86-64-generic-squashfs-combined-efi.vmdk ] && mv openwrt-x86-64-generic-squashfs-combined-efi.vmdk openwrt-x86-64-generic-squashfs-combined-efi_${{ env.VERSION_KERNEL }}_${{ github.event.inputs.lanip }}.vmdk
-        rm -rf packages
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
 
