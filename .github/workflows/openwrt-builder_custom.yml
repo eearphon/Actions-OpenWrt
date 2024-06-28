@@ -148,6 +148,7 @@ jobs:
         cd openwrt
         ./scripts/feeds update -a
         [ "${{ github.event.inputs.golangnewver }}" == "true" ] && rm -rf feeds/packages/lang/golang && git clone https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
+        [ -e feeds/packages_up/net/miniupnpc/package/mbedtls_2.28.0.tgz ] && rm -rf package/libs/mbedtls && tar zxvf feeds/packages_up/net/miniupnpc/package/mbedtls_2.28.0.tgz
         grep ^GO_VERSION_MAJOR_MINOR feeds/packages/lang/golang/golang/Makefile || echo
 
     - name: Install feeds
