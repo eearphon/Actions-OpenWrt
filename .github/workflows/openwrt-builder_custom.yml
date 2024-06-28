@@ -37,6 +37,11 @@ on:
         description: 'lines append to .config(separated by commas)'
         required: false
         default: ''
+      golangnewver:
+        description: 'use golang 22.x'
+        type: boolean
+        required: false
+        default: true
       kernel_ver:
         description: 'kernel version(only x86)'
         required: false
@@ -125,7 +130,8 @@ jobs:
             if [ "$first_char" = "1" ]; then
               delfirst="${trimmed_aline:1}"
               echo "$delfirst" >> tmpfile1
-              sed -i "#^$delfirst#d" feeds.conf.default
+              part2=$(echo $delfirst | awk '{print $2}')
+              sed -i "/ $part2 /d" feeds.conf.default
             else
               echo "$trimmed_aline" >> feeds.conf.default
             fi
@@ -134,10 +140,15 @@ jobs:
         fi
         [ "${{ github.event.inputs.luci_branch }}" == "true" ] && sed -i -e '/^src-git luci/s/^/#/' -e '/luci.git;openwrt-23.05/s/^#//' feeds.conf.default
         [ -n "${{ github.event.inputs.kernel_ver }}" ] && [ -e target/linux/x86/config-${{ github.event.inputs.kernel_ver }} ] && sed -i '/^KERNEL_PATCHVER:=/c\KERNEL_PATCHVER:=${{ github.event.inputs.kernel_ver }}' target/linux/x86/Makefile
+        cat feeds.conf.default
         pwd && echo $GITHUB_WORKSPACE/$DIY_P1_SH && ls -l
 
     - name: Update feeds
-      run: cd openwrt && ./scripts/feeds update -a
+      run: |
+        cd openwrt
+        ./scripts/feeds update -a
+        [ "${{ github.event.inputs.golangnewver }}" == "true" ] && rm -rf feeds/packages/lang/golang && git clone https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
+        grep ^GO_VERSION_MAJOR_MINOR feeds/packages/lang/golang/golang/Makefile || echo
 
     - name: Install feeds
       run: cd openwrt && ./scripts/feeds install -a
@@ -190,10 +201,14 @@ jobs:
       id: organize
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: |
-        cd openwrt/bin/targets/*/*
-        cp ../../../../.config config.full
+        cd openwrt
+        mkdir -p assets
+        cp .config assets/config.full
+        cp bin/targets/*/*/* assets/ || echo
+        rm bin/targets/*/*/* || echo
+        tar zcvf assets/packages.tgz bin/*
+        cd assets/
         [ -e openwrt-x86-64-generic-squashfs-combined-efi.vmdk ] && mv openwrt-x86-64-generic-squashfs-combined-efi.vmdk openwrt-x86-64-generic-squashfs-combined-efi_${{ env.VERSION_KERNEL }}_${{ github.event.inputs.lanip }}.vmdk
-        rm -rf packages
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
 
