@@ -153,6 +153,7 @@ jobs:
         ./scripts/feeds update -a
         [ "${{ github.event.inputs.golangnewver }}" == "true" ] && rm -rf feeds/packages/lang/golang && git clone https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
         [ -e feeds/packages_up/net/miniupnpc/package/mbedtls_2.28.0.tgz ] && rm -rf package/libs/mbedtls && tar zxvf feeds/packages_up/net/miniupnpc/package/mbedtls_2.28.0.tgz
+        [ "${{ github.event.inputs.repourl }}" == 'https://github.com/Lienol/openwrt;19.07' ] && (cd include; patch < $GITHUB_WORKSPACE/extra/lienol_openwrt_19.07.patch; cd ..)
         grep ^GO_VERSION_MAJOR_MINOR feeds/packages/lang/golang/golang/Makefile || echo
 
     - name: Install feeds
