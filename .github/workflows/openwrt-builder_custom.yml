@@ -152,10 +152,11 @@ jobs:
         cd openwrt
         ./scripts/feeds update -a
         [ "${{ github.event.inputs.golangnewver }}" == "true" ] && rm -rf feeds/packages/lang/golang && git clone https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
-        [ -d feeds/packages/lang/rust ] || (tar zxvf $GITHUB_WORKSPACE/extra/rust.tgz -C feeds/packages/; ./scripts/feeds update -i)
+        [ -d feeds/packages/lang/rust ] || tar zxvf $GITHUB_WORKSPACE/extra/rust.tgz -C feeds/packages/
         [ -e feeds/packages_up/net/miniupnpc/package/mbedtls_2.28.0.tgz ] && rm -rf package/libs/mbedtls && tar zxvf feeds/packages_up/net/miniupnpc/package/mbedtls_2.28.0.tgz
         [ "${{ github.event.inputs.repourl }}" == 'https://github.com/Lienol/openwrt;19.07' ] && (cd include; patch < $GITHUB_WORKSPACE/extra/lienol_openwrt_19.07.patch; cd ..)
-        grep ^GO_VERSION_MAJOR_MINOR feeds/packages/lang/golang/golang/Makefile || echo
+        grep ^GO_VERSION_MAJOR_MINOR feeds/packages/lang/golang/golang/Makefile || echo 'golang version unknow'
+        ./scripts/feeds update -i
 
     - name: Install feeds
       run: cd openwrt && ./scripts/feeds install -a
@@ -211,8 +212,8 @@ jobs:
         cd openwrt
         mkdir -p assets
         cp .config assets/config.full
-        cp bin/targets/*/*/* assets/ || echo
-        rm bin/targets/*/*/* || echo
+        cp bin/targets/*/*/* assets/ || :
+        rm bin/targets/*/*/* || :
         tar zcvf assets/packages.tgz bin/*
         cd assets/
         [ -e openwrt-x86-64-generic-squashfs-combined-efi.vmdk ] && mv openwrt-x86-64-generic-squashfs-combined-efi.vmdk openwrt-x86-64-generic-squashfs-combined-efi_${{ env.VERSION_KERNEL }}_${{ github.event.inputs.lanip }}.vmdk
