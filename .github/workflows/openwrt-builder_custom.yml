@@ -24,6 +24,11 @@ on:
         description: 'use cache'
         type: boolean
         required: false
+        default: true
+      disable_ccache:
+        description: 'disable cache ccache'
+        type: boolean
+        required: false
         default: false
       diy-partx_suffix:
         description: 'diy-partx_SUFFIX.sh (Lienol_23.05)'
@@ -176,9 +181,9 @@ jobs:
 
     - name: Cache
       uses: stupidloud/cachewrtbuild@main
-      if: ${{ github.event.inputs.use_cache }} == 'true'
+      if: ${{ github.event.inputs.use_cache == 'true' }}
       with:
-        ccache: ${{ github.event.inputs.use_cache }}
+        ccache: ${{ github.event.inputs.disable_ccache == 'false' }}
         mixkey: ${{ env.ARCH }}
         prefix: ${{ github.workspace }}/openwrt
 
