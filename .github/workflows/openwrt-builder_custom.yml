@@ -176,6 +176,7 @@ jobs:
 
     - name: Cache
       uses: stupidloud/cachewrtbuild@main
+      if: ${{ github.event.inputs.use_cache }} == 'true'
       with:
         ccache: ${{ github.event.inputs.use_cache }}
         mixkey: ${{ env.ARCH }}
