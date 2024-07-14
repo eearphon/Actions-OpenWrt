@@ -41,7 +41,6 @@ CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_NaiveProxy=y
 CONFIG_PACKAGE_luci-app-rclone=y
 CONFIG_PACKAGE_kmod-fuse=y
 # CONFIG_PACKAGE_automount is not set
-# CONFIG_PACKAGE_autosamba is not set
 CONFIG_PACKAGE_luci-app-dockerman=y
 CONFIG_PACKAGE_luci-proto-ipv6=y
 CONFIG_PACKAGE_odhcp6c=y
@@ -50,15 +49,6 @@ CONFIG_PACKAGE_luci-app-transmission=y
 CONFIG_PACKAGE_luci-app-aliyundrive-webdav=y
 CONFIG_PACKAGE_luci-app-alist=y
 CONFIG_PACKAGE_ftp=y
+CONFIG_BUSYBOX_CUSTOM=y
+CONFIG_BUSYBOX_CONFIG_TELNET=y
 EOF
-
-#rclone
-sed -i 's/PKG_VERSION:=1.61.1/PKG_VERSION:=1.66.0/' feeds/packages/net/rclone/Makefile
-sed -i 's/PKG_HASH:=f9fb7bae1f19896351db64e3713b67bfd151c49b2b28e6c6233adf67dbc2c899/PKG_HASH:=9249391867044a0fa4c5a948b46a03b320706b4d5c4d59db9d4aeff8d47cade2/' feeds/packages/net/rclone/Makefile
-
-#transmission-web-control
-sed -i '/^PKG_SOURCE_DATE:=/c\PKG_SOURCE_DATE:=2024-04-09' feeds/packages/net/transmission-web-control/Makefile
-sed -i '/^PKG_SOURCE_VERSION:=/c\PKG_SOURCE_VERSION:=f02a47aff2680de10c2269e22a3d0b37a318dbcd' feeds/packages/net/transmission-web-control/Makefile
-sed -i '/^PKG_MIRROR_HASH:=/c\PKG_MIRROR_HASH:=265e413f24427dda4ec4a4bb24d67876ebe6245850bd27855bc6f475a923094f' feeds/packages/net/transmission-web-control/Makefile
-sed -i 's/DEPENDS:=+transmission-daemon-openssl/DEPENDS:=+transmission-daemon/' feeds/packages/net/transmission-web-control/Makefile
-sed -i 's/transmission\/web/transmission\/public_html/g' feeds/packages/net/transmission-web-control/Makefile
