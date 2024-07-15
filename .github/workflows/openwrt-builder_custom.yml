@@ -255,7 +255,7 @@ jobs:
         echo "- **VERSION_KERNEL:** ${{ env.VERSION_KERNEL }}" >> release.txt
         echo "- **LAN_IP:** ${{ env.LAN_IP }}" >> release.txt
         echo "- **Description:** ${{ github.event.inputs.build_desc }}" >> release.txt
-        echo "- **Luci app:**" >> release.txt
+        echo "### Luci app" >> release.txt
         grep ^luci-app- ${{ env.FIRMWARE }}/openwrt-*.manifest | awk 'BEGIN { print "**luci app**|**version**\n-|-" } { split($0, arr, " - "); print arr[1] "|" arr[2] }' >> release.txt
         echo "status=success" >> $GITHUB_OUTPUT
         pwd && ls -al
