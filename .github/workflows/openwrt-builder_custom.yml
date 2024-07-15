@@ -20,16 +20,20 @@ on:
         description: 'repo_url;branch (https://github.com/Lienol/openwrt;22.03)'
         required: true
         default: 'https://github.com/coolsnowwolf/lede'
+      build_desc:
+        description: 'Description'
+        required: false
+        default: ''
       use_cache:
         description: 'use cache'
         type: boolean
         required: false
         default: true
-      disable_ccache:
-        description: 'disable cache ccache'
-        type: boolean
-        required: false
-        default: false
+#     disable_ccache:
+#       description: 'disable cache ccache'
+#       type: boolean
+#       required: false
+#       default: false
       diy-partx_suffix:
         description: 'diy-partx_SUFFIX.sh (Lienol_23.05)'
         required: false
@@ -87,27 +91,26 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        #sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
-        #sudo docker image prune --all --force
-        sudo -E apt -qq update
-        sudo -E apt -qq install ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libpython3-dev libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pyelftools python3-setuptools qemu-utils rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
-        #sudo -E apt -qq autoremove --purge
-        #sudo -E apt -qq clean
+        sudo -E apt-get -qq update
+        sudo -E apt-get -qq install ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libpython3-dev libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pyelftools python3-setuptools qemu-utils rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
         sudo timedatectl set-timezone "$TZ"
         sudo mkdir -p /mnt/workdir
         sudo chown $USER:$GROUPS /mnt/workdir
         eval $(echo '${{ github.event.inputs.repourl }}' | awk -F";" '{print "var1="$1";repobranch="$2}')
         echo "REPO_URL=$var1" >> $GITHUB_ENV
         echo "REPO_BRANCH=$repobranch" >> $GITHUB_ENV
-        author=$(echo '${{ github.event.inputs.repourl }}' | awk -F"/" '{print $4}')
+        repoowner=$(echo '${{ github.event.inputs.repourl }}' | awk -F"/" '{print $4}')
         [ -n "$repobranch" ] && repobranch="_$repobranch"
         if [ -n "${{ github.event.inputs.diy-partx_suffix }}" ]; then
           if [ ! -e $DIY_P1_SH ]; then
-            echo "DIY_P1_SH=diy-part1_${author}.sh" >> $GITHUB_ENV
+            echo "DIY_P1_SH=diy-part1_${repoowner}.sh" >> $GITHUB_ENV
+          fi
+          if [ ! -e $DIY_P2_SH ]; then
+            echo "DIY_P2_SH=diy-part2_${repoowner}.sh" >> $GITHUB_ENV
           fi
         else
-          echo "DIY_P1_SH=diy-part1_${author}${repobranch}.sh" >> $GITHUB_ENV
-          echo "DIY_P2_SH=diy-part2_${author}${repobranch}.sh" >> $GITHUB_ENV
+          echo "DIY_P1_SH=diy-part1_${repoowner}${repobranch}.sh" >> $GITHUB_ENV
+          echo "DIY_P2_SH=diy-part2_${repoowner}${repobranch}.sh" >> $GITHUB_ENV
         fi
 
     - name: Clone source code
@@ -183,7 +186,8 @@ jobs:
       uses: stupidloud/cachewrtbuild@main
       if: ${{ github.event.inputs.use_cache == 'true' }}
       with:
-        ccache: ${{ github.event.inputs.disable_ccache == 'false' }}
+#       ccache: ${{ github.event.inputs.disable_ccache == 'false' }}
+        ccache: true
         mixkey: ${{ env.ARCH }}
         prefix: ${{ github.workspace }}/openwrt
 
@@ -246,14 +250,16 @@ jobs:
       if: steps.compile.outputs.status == 'success' && env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
         echo "release_tag=$(date +"%Y.%m.%d-%H%M")_$VERSION_KERNEL" >> $GITHUB_OUTPUT
-        date >> release.txt
-        echo "REPO_URL: ${{ env.REPO_URL }}" >> release.txt
-        echo "REPO_BRANCH: ${{ env.REPO_BRANCH }}" >> release.txt
-        echo "DIY_P1_SH: ${{ env.DIY_P1_SH }}" >> release.txt
-        echo "DIY_P2_SH: ${{ env.DIY_P2_SH }}" >> release.txt
-        echo "VERSION_KERNEL: ${{ env.VERSION_KERNEL }}" >> release.txt
-        echo "LAN_IP: ${{ env.LAN_IP }}" >> release.txt
-        [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
+        echo "- **Build time:** $(date +"%Y.%m.%d %H:%M")" >> release.txt
+        echo "- **REPO_URL:** ${{ env.REPO_URL }}" >> release.txt
+        echo "- **REPO_BRANCH:** ${{ env.REPO_BRANCH }}" >> release.txt
+        echo "- **DIY_P1_SH:** ${{ env.DIY_P1_SH }}" >> release.txt
+        echo "- **DIY_P2_SH:** ${{ env.DIY_P2_SH }}" >> release.txt
+        echo "- **VERSION_KERNEL:** ${{ env.VERSION_KERNEL }}" >> release.txt
+        echo "- **LAN_IP:** ${{ env.LAN_IP }}" >> release.txt
+        echo "- **Description:** ${{ github.event.inputs.build_desc }}" >> release.txt
+        echo "- **Luci app:**" >> release.txt
+        grep ^luci-app- ${{ env.FIRMWARE }}/openwrt-*.manifest | sed 's/^/  - /' >> release.txt
         echo "status=success" >> $GITHUB_OUTPUT
         pwd && ls -al
 
