@@ -245,15 +245,15 @@ jobs:
       if: steps.compile.outputs.status == 'success' && env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
         echo "release_tag=$(date +"%Y.%m.%d-%H%M")_$VERSION_KERNEL" >> $GITHUB_OUTPUT
-        date >> release.txt
-        echo "REPO_URL: ${{ env.REPO_URL }}" >> release.txt
-        echo "REPO_BRANCH: ${{ env.REPO_BRANCH }}" >> release.txt
-        echo "DIY_P1_SH: ${{ env.DIY_P1_SH }}" >> release.txt
-        echo "DIY_P2_SH: ${{ env.DIY_P2_SH }}" >> release.txt
-        echo "VERSION_KERNEL: ${{ env.VERSION_KERNEL }}" >> release.txt
-        echo "LAN_IP: ${{ env.LAN_IP }}" >> release.txt
+        echo "- **Build time:** $(date +"%Y.%m.%d %H:%M")" >> release.txt
+        echo "- **REPO_URL:** ${{ env.REPO_URL }}" >> release.txt
+        echo "- **REPO_BRANCH:** ${{ env.REPO_BRANCH }}" >> release.txt
+        echo "- **DIY_P1_SH:** ${{ env.DIY_P1_SH }}" >> release.txt
+        echo "- **DIY_P2_SH:** ${{ env.DIY_P2_SH }}" >> release.txt
+        echo "- **VERSION_KERNEL:** ${{ env.VERSION_KERNEL }}" >> release.txt
+        echo "- **LAN_IP:** ${{ env.LAN_IP }}" >> release.txt
         [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
-        grep ^luci-app- ${{ env.FIRMWARE }}/openwrt-x86-64-generic.manifest | awk 'BEGIN { print "| Luci-app | Version |\n|-------|--------|" } { split($0, arr, " - "); print "| " arr[1] " | " arr[2] " |" }'
+        grep ^luci-app- ${{ env.FIRMWARE }}/openwrt-x86-64-generic.manifest | awk 'BEGIN { print "| Luci-app | Version |\n|-------|--------|" } { split($0, arr, " - "); print "| " arr[1] " | " arr[2] " |" }' >> release.txt
         echo "status=success" >> $GITHUB_OUTPUT
         pwd && ls -al
 
