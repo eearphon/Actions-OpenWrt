@@ -33,7 +33,7 @@ on:
           - cache
           - disable
       diy-partx_suffix:
-        description: 'diy-partx_SUFFIX.sh (Lienol_23.05)'
+        description: 'diy-partx_SUFFIX.sh (Lienol_23.05, disable)'
         required: false
         default: ''
       append2feeds_conf:
