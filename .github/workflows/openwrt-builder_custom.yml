@@ -65,8 +65,8 @@ on:
 env:
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: .config
-  DIY_P1_SH: ${{ inputs.diy-partx_suffix == 'disable' && "" || "diy-part1_${{ inputs.diy-partx_suffix }}.sh" }}
-  DIY_P2_SH: ${{ inputs.diy-partx_suffix == 'disable' && "" || "diy-part2_${{ inputs.diy-partx_suffix }}.sh" }}
+  DIY_P1_SH: ${{ inputs.diy-partx_suffix == 'disable' && '' || diy-part1_${{ inputs.diy-partx_suffix }}.sh }}
+  DIY_P2_SH: ${{ inputs.diy-partx_suffix == 'disable' && '' || diy-part2_${{ inputs.diy-partx_suffix }}.sh }}
   LAN_IP: ${{ github.event.inputs.lanip }}
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
