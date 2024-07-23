@@ -41,36 +41,14 @@ CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_NaiveProxy=y
 CONFIG_PACKAGE_luci-app-rclone=y
 CONFIG_PACKAGE_kmod-fuse=y
 # CONFIG_PACKAGE_automount is not set
-# CONFIG_PACKAGE_autosamba is not set
 CONFIG_PACKAGE_luci-app-dockerman=y
 CONFIG_PACKAGE_luci-proto-ipv6=y
 CONFIG_PACKAGE_odhcp6c=y
 CONFIG_PACKAGE_odhcpd-ipv6only=y
 CONFIG_PACKAGE_luci-app-transmission=y
 CONFIG_PACKAGE_luci-app-aliyundrive-webdav=y
-EOF
-
-#CONFIG_PACKAGE_ipv6helper=y
-
-rm -rf feeds/packages/lang/golang
-git clone https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
-
-#luci-app-alist
-rm -rf package/alist
-git clone https://github.com/sbwml/luci-app-alist package/alist
-cat >> .config <<EOF
 CONFIG_PACKAGE_luci-app-alist=y
+CONFIG_PACKAGE_ftp=y
+CONFIG_BUSYBOX_CUSTOM=y
+CONFIG_BUSYBOX_CONFIG_TELNET=y
 EOF
-
-#luci-app-aliyundrive-webdav
-git clone --single-branch https://github.com/messense/aliyundrive-webdav
-rm -rf feeds/packages/multimedia/aliyundrive-webdav feeds/luci/applications/luci-app-aliyundrive-webdav
-cp -a aliyundrive-webdav/openwrt/aliyundrive-webdav feeds/packages/multimedia/
-cp -a aliyundrive-webdav/openwrt/luci-app-aliyundrive-webdav feeds/luci/applications/
-rm -rf aliyundrive-webdav
-
-#rclone
-sed -i 's/PKG_VERSION:=1.61.1/PKG_VERSION:=1.66.0/' feeds/packages/net/rclone/Makefile
-sed -i 's/PKG_HASH:=f9fb7bae1f19896351db64e3713b67bfd151c49b2b28e6c6233adf67dbc2c899/PKG_HASH:=9249391867044a0fa4c5a948b46a03b320706b4d5c4d59db9d4aeff8d47cade2/' feeds/packages/net/rclone/Makefile
-
-sh $GITHUB_WORKSPACE/my-transmission.sh
