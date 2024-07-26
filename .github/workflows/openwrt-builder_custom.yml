@@ -134,17 +134,18 @@ jobs:
         cd openwrt
         [ -n "${{ github.event.inputs.checkout }}" ] && git reset --hard ${{ github.event.inputs.checkout }}
         [ -e $GITHUB_WORKSPACE/$DIY_P1_SH ] && sh $GITHUB_WORKSPACE/$DIY_P1_SH || echo "DIY_P1_SH=" >> $GITHUB_ENV
-        if [[ $A2FEEDS == new* ]]; then
-          rm -rf feeds.conf.default
-          git checkout feeds.conf.default
-          echo "Use default feeds.conf.default"
-        elif [ -n "$A2FEEDS" ]; then
+        if [ -n "$A2FEEDS" ]; then
           IFS=',' read -ra array <<< "$A2FEEDS"
           for aline in "${array[@]}"; do
             trimmed_aline="$(echo "${aline}" | awk '{$1=$1}1')"
+            if [ "$trimmed_aline" == "new" ]; then
+              rm -rf feeds.conf.default
+              git checkout feeds.conf.default
+              continue
+            fi
             part2=$(echo $trimmed_aline | awk '{print " " $2 " "}')
             first_char="${trimmed_aline:0:1}"
-            if [ "$first_char" = "1" ]; then
+            if [ "$first_char" == "1" ]; then
               delfirst="${trimmed_aline:1}"
               echo "$delfirst" >> tmpfile1
               sed -i "/$part2/d" feeds.conf.default
