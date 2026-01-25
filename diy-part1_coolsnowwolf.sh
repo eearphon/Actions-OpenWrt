@@ -22,8 +22,8 @@
 
 sed -i '1i\
 src-git packages_up https://github.com/eearphon/packages_up.git\
-src-git passwall_packages https://github.com/xiaorouji/openwrt-passwall-packages.git\
-src-git passwall https://github.com/xiaorouji/openwrt-passwall.git\
-src-git passwall2 https://github.com/xiaorouji/openwrt-passwall2.git\
+src-git passwall_packages https://github.com/Openwrt-Passwall/openwrt-passwall-packages.git\
+src-git passwall https://github.com/Openwrt-Passwall/openwrt-passwall.git\
+src-git passwall2 https://github.com/Openwrt-Passwall/openwrt-passwall2.git\
 src-git helloworld https://github.com/fw876/helloworld.git
 ' ./feeds.conf.default
