@@ -21,9 +21,10 @@
 #git checkout dc4d37c71423bd48b02f614414b149fa192d3406
 
 sed -i '1i\
+src-git openlist2 https://github.com/sbwml/luci-app-openlist2.git\
 src-git packages_up https://github.com/eearphon/packages_up.git\
 src-git passwall_packages https://github.com/Openwrt-Passwall/openwrt-passwall-packages.git\
 src-git passwall https://github.com/Openwrt-Passwall/openwrt-passwall.git\
 src-git passwall2 https://github.com/Openwrt-Passwall/openwrt-passwall2.git\
-src-git helloworld https://github.com/fw876/helloworld.git
+#src-git helloworld https://github.com/fw876/helloworld.git
 ' ./feeds.conf.default
