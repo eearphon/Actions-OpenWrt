@@ -216,6 +216,8 @@ jobs:
     - name: Apply patches
       id: patches
       run: |
+        df -h && pwd && ls -l
+        mkdir -p openwrt/feeds/helloworld/gn/patches/
         cp patches/999-fix-clang-cpp20-ranges.patch openwrt/feeds/helloworld/gn/patches/
         echo "Apply patches ok."
 
