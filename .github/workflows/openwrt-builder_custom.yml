@@ -213,6 +213,13 @@ jobs:
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
 
+    - name: Apply patches
+      id: patches
+      run: |
+        cd openwrt
+        cp patches/999-fix-clang-cpp20-ranges.patch feeds/helloworld/gn/patches/
+        echo "Apply patches ok."
+
     - name: Compile the firmware
       id: compile
       run: |

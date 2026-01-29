@@ -1,0 +1,17 @@
+--- a/src/gn/rust_project_writer.cc
++++ b/src/gn/rust_project_writer.cc
+@@ -215,12 +215,12 @@
+   }
+   // Remove duplicates. We could use a set-like structure, but chances are
+   // there's very few elements.
+-  std::ranges::sort(include_dirs, [](const auto& lhs, const auto& rhs) {
++  std::sort(include_dirs.begin(), include_dirs.end(), [](const auto& lhs, const auto& rhs) {
+     return lhs.value() < rhs.value();
+   });
+-  include_dirs.erase(std::ranges::unique(include_dirs).begin(),
+-                     include_dirs.end());
++  auto last = std::unique(include_dirs.begin(), include_dirs.end());
++  include_dirs.erase(last, include_dirs.end());
+ 
+   Crate crate = Crate(crate_root, include_dirs, crate_id, crate_label,
+                       edition.value_or("2015"));
