@@ -1,0 +1,49 @@
+#!/bin/sh
+
+# 1. 配置参数
+PARTIAL_UUID="f5d93fc7d"
+INIT_SCRIPT="setup/setup.sh"
+
+# 2. 动态获取完整 UUID
+FULL_UUID=$(block info | grep -i "$PARTIAL_UUID" | grep -oE 'UUID="[^"]+"' | cut -d'"' -f2 | head -n 1)
+
+if [ -z "$FULL_UUID" ]; then
+    logger -t "INIT_BOOT" "错误：未发现匹配前缀 $PARTIAL_UUID 的设备"
+    exit 1
+fi
+
+# 3. 获取设备名（如 /dev/sdb1）
+DEV_NAME=$(block info | grep "$FULL_UUID" | cut -d':' -f1)
+
+# 4. 寻找当前挂载点
+CURRENT_MOUNT=$(grep "^$DEV_NAME " /proc/mounts | awk '{print $2}' | head -n 1)
+
+if [ -n "$CURRENT_MOUNT" ]; then
+    FINAL_PATH="$CURRENT_MOUNT"
+    logger -t "INIT_BOOT" "设备已挂载在: $FINAL_PATH"
+else
+    # --- 防冲突逻辑 ---
+    # 如果没挂载，创建一个以 UUID 命名的唯一挂载点，绝不会重名
+    FINAL_PATH="/mnt/disk-$FULL_UUID"
+    logger -t "INIT_BOOT" "创建动态挂载点: $FINAL_PATH"
+    
+    mkdir -p "$FINAL_PATH"
+    if mount -t ext4 -U "$FULL_UUID" "$FINAL_PATH"; then
+        logger -t "INIT_BOOT" "挂载成功"
+    else
+        logger -t "INIT_BOOT" "挂载失败，请检查文件系统"
+        exit 1
+    fi
+fi
+
+# 5. 执行脚本
+TARGET_EXEC="$FINAL_PATH/$INIT_SCRIPT"
+
+if [ -f "$TARGET_EXEC" ]; then
+    logger -t "INIT_BOOT" "运行脚本: $TARGET_EXEC"
+    cd "$(dirname "$TARGET_EXEC")"
+    sh "./$(basename "$INIT_SCRIPT")" "$FINAL_PATH"
+    cd /
+else
+    logger -t "INIT_BOOT" "路径错误：找不到 $TARGET_EXEC"
+fi
