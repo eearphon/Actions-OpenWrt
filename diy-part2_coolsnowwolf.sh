@@ -54,4 +54,4 @@ CONFIG_BUSYBOX_CONFIG_TELNET=y
 CONFIG_VMDK_IMAGES=y
 EOF
 
-sed -i '\#^exit 0#i\[ -f /mnt/sdb1/setup/setup.sh \] \&\& /mnt/sdb1/setup/setup.sh' package/base-files/files/etc/rc.local
+sed -i '\#^exit 0#i\[ -f /usr/bin/myinit.sh \] \&\& /usr/bin/myinit.sh' package/base-files/files/etc/rc.local
