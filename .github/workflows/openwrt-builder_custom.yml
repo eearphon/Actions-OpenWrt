@@ -182,6 +182,7 @@ jobs:
         [ -e files ] && mv files openwrt/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
         cd openwrt
+        [ -e files/usr/bin/myinit.sh ] && chmod u+x files/usr/bin/myinit.sh
         [ -e $GITHUB_WORKSPACE/$DIY_P2_SH ] && sh $GITHUB_WORKSPACE/$DIY_P2_SH || echo "DIY_P2_SH=" >> $GITHUB_ENV
         [ -n "${{ github.event.inputs.append2config }}" ] && echo "${{ github.event.inputs.append2config }}" | awk -F"," '{ for(i=1; i<=NF; i++) print $i }' | awk '{$1=$1}1' >> .config
         grep -q ^new .config && sed -i '1,/^new/d' .config
