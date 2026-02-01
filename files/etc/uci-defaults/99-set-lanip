@@ -6,6 +6,18 @@ if ip addr show dev eth0 | awk '/link\/ether/ {print $2}' | grep -q '29:f7:b5'; 
 
   uci set network.lan.ipaddr='192.168.2.254'
   uci commit network
+
+  if [ -f /etc/config/samba4 ]; then
+    uci set samba4.@samba[0].name='RT254'
+    uci commit samba4
+  fi
+
+  uci set dhcp.lan.dhcpv6='disable'
+  uci set dhcp.lan.ignore='1'
+  uci delete dhcp.lan.ra
+  uci commit dhcp
+
+  /etc/init.d/odhcpd disable
 fi
 
 exit 0
