@@ -222,9 +222,6 @@ jobs:
         df -h && pwd && ls -l
         mkdir -p openwrt/feeds/helloworld/gn/patches/
         cp patches/999-fix-clang-cpp20-ranges.patch openwrt/feeds/helloworld/gn/patches/
-        if grep -q 'CONFIG_TARGET_ramips_mt7621=y' openwrt/.config; then
-          sed -i 's/2097152/2117632/g' openwrt/target/linux/ramips/image/mt7621.mk
-        fi
         echo "Apply patches ok."
 
     - name: Compile the firmware
