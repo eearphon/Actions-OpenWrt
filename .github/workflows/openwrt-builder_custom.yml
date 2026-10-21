@@ -255,6 +255,7 @@ jobs:
         cd openwrt
         mkdir -p assets
         cp .config assets/config.full
+        cp feeds.conf.default assets/
         cp bin/targets/*/*/* assets/ || :
         rm bin/targets/*/*/* || :
         tar zcvf assets/packages.tgz bin/*
