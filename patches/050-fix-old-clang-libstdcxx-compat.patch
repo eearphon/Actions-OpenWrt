@@ -1,0 +1,94 @@
+Subject: [PATCH] gn: support older Clang and libstdc++
+
+Avoid scope transform views with libstdc++ before 13 and collect FFI
+items with a loop. Explicitly initialize the const target cache vector
+and use brace initialization when appending header violations.
+
+--- a/src/gn/scope.h
++++ b/src/gn/scope.h
+@@ -235,12 +235,22 @@ class Scope {
+   // scopes.
+   void GetCurrentScopeValues(KeyValueMap* output) const;
+ 
+-  // Returns all values set in the current scope as a lazy view of
+-  // std::pair<std::string_view, const Value*>.
++  // Returns all values set in the current scope as pairs of
++  // std::string_view and const Value*. Prefer a lazy view when supported.
+   auto GetCurrentScopeValues() const {
++#if defined(_GLIBCXX_RELEASE) && _GLIBCXX_RELEASE < 13
++    // Avoid transform_view constraints rejected by older Clang/libstdc++.
++    // Keep pointers to the original values, just like the lazy view.
++    std::vector<std::pair<std::string_view, const Value*>> values;
++    values.reserve(values_.size());
++    for (const auto& pair : values_)
++      values.emplace_back(pair.first, &pair.second.value);
++    return values;
++#else
+     return values_ | std::views::transform([](const auto& pair) {
+              return std::make_pair(pair.first, &pair.second.value);
+            });
++#endif
+   }
+ 
+   // Returns true if the values in the current scope are the same as all
+--- a/src/gn/ffi/scope.cc
++++ b/src/gn/ffi/scope.cc
+@@ -4,12 +4,11 @@
+ 
+ #include "gn/ffi/scope.h"
+ 
+-#include <ranges>
++#include <utility>
+ #include <vector>
+ 
+ #include "gn/ffi/bridge.h"
+ #include "gn/ffi/slice.h"
+-#include "gn/range_utils.h"
+ #include "gn/scope.h"
+ #include "gn/value.h"
+ 
+@@ -71,11 +70,10 @@ SliceAny NewStruct(const Settings& settings,
+ // * my_macro would complain that it got an unexpected parameter "foo"
+ // * my_struct.srcs would also be accessible.
+ SliceAny GetScopeItems(const Scope& scope) {
+-  auto range =
+-      scope.GetCurrentScopeValues() | std::views::transform([](auto pair) {
+-        return KeyValue{rust::Str(pair.first), *pair.second};
+-      });
+-  return IntoSlice(to_vec(range));
++  std::vector<KeyValue> items;
++  for (auto [key, value] : scope.GetCurrentScopeValues())
++    items.push_back(KeyValue{rust::Str(key), *value});
++  return IntoSlice(std::move(items));
+ }
+ 
+ const Value* GetValue(const Scope& scope, rust::Str ident) {
+--- a/src/gn/commands.h
++++ b/src/gn/commands.h
+@@ -187,7 +187,7 @@
+                      std::vector<std::pair<const Target*, ApiScope>>>
+       file_to_targets_;
+   // Never mutated. Used when a file is not in any target.
+-  const std::vector<std::pair<const Target*, ApiScope>> empty_targets_;
++  const std::vector<std::pair<const Target*, ApiScope>> empty_targets_{};
+ 
+   // Maps a Target to the list of forwarding targets that directly expose it.
+   std::once_flag forwarding_parents_initialized_;
+--- a/src/gn/header_checker.cc
++++ b/src/gn/header_checker.cc
+@@ -543,13 +543,13 @@ bool HeaderChecker::CheckFile(const TargetVector& targets,
+ 
+     for (const TargetInfo& from_target_info : targets) {
+       const Target* from_target = from_target_info.target;
+-      violations->emplace_back(
++      violations->push_back(Violation{
+           Err(from_target->defined_from(), "Source file not found.",
+               "The target:\n  " +
+                   from_target->label().GetUserVisibleName(false) +
+                   "\nhas a source file:\n  " + file.value() +
+                   "\nwhich was not found."),
+-          from_target, file, SourceFile());
++          from_target, file, SourceFile()});
+     }
+     return false;
+   }
